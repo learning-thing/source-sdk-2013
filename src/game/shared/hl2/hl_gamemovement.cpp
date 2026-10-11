@@ -4,6 +4,7 @@
 //
 //=============================================================================//
 #include "cbase.h"
+#include "movevars_shared.h"
 #include "hl_gamemovement.h"
 #include "in_buttons.h"
 #include "utlrbtree.h"
@@ -22,21 +23,23 @@
 
 static ConVar sv_autoladderdismount( "sv_autoladderdismount", "1", FCVAR_REPLICATED, "Automatically dismount from ladders when you reach the end (don't have to +USE)." );
 static ConVar sv_ladderautomountdot( "sv_ladderautomountdot", "0.4", FCVAR_REPLICATED, "When auto-mounting a ladder by looking up its axis, this is the tolerance for looking now directly along the ladder axis." );
-
+static ConVar sv_autoBunnyHopping( "sv_autoBunnyHopping", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Auto Jump on ground contact" );
 static ConVar sv_ladder_useonly( "sv_ladder_useonly", "0", FCVAR_REPLICATED, "If set, ladders can only be mounted by pressing +USE" );
 
 #define USE_DISMOUNT_SPEED 100
 
+extern bool g_bMovementOptimizations;
+
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CHL2GameMovement::CHL2GameMovement()
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : type - 
+// Purpose:
+// Input  : type -
 // Output : int
 //-----------------------------------------------------------------------------
 int CHL2GameMovement::GetCheckInterval( IntervalType_t type )
@@ -49,7 +52,7 @@ int CHL2GameMovement::GetCheckInterval( IntervalType_t type )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CHL2GameMovement::IsForceMoveActive()
@@ -81,7 +84,7 @@ public:
 	virtual void Spawn();
 };
 
-CReservePlayerSpot *CReservePlayerSpot::ReserveSpot( 
+CReservePlayerSpot *CReservePlayerSpot::ReserveSpot(
 	CBasePlayer *owner, const Vector& org, const Vector& mins, const Vector& maxs, bool& validspot )
 {
 	CReservePlayerSpot *spot = ( CReservePlayerSpot * )CreateEntityByName( "reserved_spot" );
@@ -95,8 +98,8 @@ CReservePlayerSpot *CReservePlayerSpot::ReserveSpot(
 	// See if spot is valid
 	trace_t tr;
 	UTIL_TraceHull(
-		org, 
-		org, 
+		org,
+		org,
 		mins,
 		maxs,
 		MASK_PLAYERSOLID,
@@ -113,8 +116,8 @@ CReservePlayerSpot *CReservePlayerSpot::ReserveSpot(
 		// See if spot is valid
 		trace_t tr;
 		UTIL_TraceHull(
-			org2, 
-			org2, 
+			org2,
+			org2,
 			mins,
 			maxs,
 			MASK_PLAYERSOLID,
@@ -128,7 +131,7 @@ CReservePlayerSpot *CReservePlayerSpot::ReserveSpot(
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CReservePlayerSpot::Spawn()
 {
@@ -144,11 +147,11 @@ LINK_ENTITY_TO_CLASS( reserved_spot, CReservePlayerSpot );
 
 #endif
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : mounting - 
-//			transit_speed - 
-//			goalpos - 
-//			*ladder - 
+// Purpose:
+// Input  : mounting -
+//			transit_speed -
+//			goalpos -
+//			*ladder -
 //-----------------------------------------------------------------------------
 void CHL2GameMovement::StartForcedMove( bool mounting, float transit_speed, const Vector& goalpos, CFuncLadder *ladder )
 {
@@ -168,15 +171,15 @@ void CHL2GameMovement::StartForcedMove( bool mounting, float transit_speed, cons
 		if ( ladder->DontGetOnLadder() )
 			return;
 	}
-		
+
 #if !defined( CLIENT_DLL )
 	// Reserve goal slot here
 	bool valid = false;
-	lm->m_hReservedSpot = CReservePlayerSpot::ReserveSpot( 
-		player, 
-		goalpos, 
-		GetPlayerMins( ( player->GetFlags() & FL_DUCKING ) ? true : false ), 
-		GetPlayerMaxs( ( player->GetFlags() & FL_DUCKING ) ? true : false ), 
+	lm->m_hReservedSpot = CReservePlayerSpot::ReserveSpot(
+		player,
+		goalpos,
+		GetPlayerMins( ( player->GetFlags() & FL_DUCKING ) ? true : false ),
+		GetPlayerMaxs( ( player->GetFlags() & FL_DUCKING ) ? true : false ),
 		valid );
 	if ( !valid )
 	{
@@ -198,7 +201,7 @@ void CHL2GameMovement::StartForcedMove( bool mounting, float transit_speed, cons
 	Vector delta = lm->m_vecGoalPosition - lm->m_vecStartPosition;
 
 	float distance = delta.Length();
-	
+
 	Assert( transit_speed > 0.001f );
 
 	// Compute time required to move that distance
@@ -295,11 +298,11 @@ bool CHL2GameMovement::OnLadder( trace_t &trace )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : ladders - 
-//			maxdist - 
-//			**ppLadder - 
-//			ladderOrigin - 
+// Purpose:
+// Input  : ladders -
+//			maxdist -
+//			**ppLadder -
+//			ladderOrigin -
 //-----------------------------------------------------------------------------
 void CHL2GameMovement::Findladder( float maxdist, CFuncLadder **ppLadder, Vector& ladderOrigin, const CFuncLadder *skipLadder )
 {
@@ -343,7 +346,7 @@ void CHL2GameMovement::Findladder( float maxdist, CFuncLadder **ppLadder, Vector
 		// Need to trace to see if it's clear
 		trace_t tr;
 
-		UTIL_TraceLine( mv->GetAbsOrigin(), closest, 
+		UTIL_TraceLine( mv->GetAbsOrigin(), closest,
 			MASK_PLAYERSOLID,
 			player,
 			COLLISION_GROUP_NONE,
@@ -356,7 +359,7 @@ void CHL2GameMovement::Findladder( float maxdist, CFuncLadder **ppLadder, Vector
 			// Try a trace stepped up from the ground a bit, in case there's something at ground level blocking us.
 			float sizez = GetPlayerMaxs().z - GetPlayerMins().z;
 
-			UTIL_TraceLine( mv->GetAbsOrigin() + Vector( 0, 0, sizez * 0.5f ), closest, 
+			UTIL_TraceLine( mv->GetAbsOrigin() + Vector( 0, 0, sizez * 0.5f ), closest,
 				MASK_PLAYERSOLID,
 				player,
 				COLLISION_GROUP_NONE,
@@ -416,8 +419,8 @@ void CHL2GameMovement::GetSortedDismountNodeList( const Vector &org, float radiu
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-//			*ladder - 
+// Purpose:
+//			*ladder -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CHL2GameMovement::ExitLadderViaDismountNode( CFuncLadder *ladder, bool strict, bool useAlternate )
@@ -453,8 +456,8 @@ bool CHL2GameMovement::ExitLadderViaDismountNode( CFuncLadder *ladder, bool stri
 
 		trace_t tr;
 		UTIL_TraceHull(
-			org, 
-			org, 
+			org,
+			org,
 			GetPlayerMins( ( player->GetFlags() & FL_DUCKING ) ? true : false ),
 			GetPlayerMaxs( ( player->GetFlags() & FL_DUCKING ) ? true : false ),
 			MASK_PLAYERSOLID,
@@ -499,8 +502,8 @@ bool CHL2GameMovement::ExitLadderViaDismountNode( CFuncLadder *ladder, bool stri
 
 	if ( found )
 	{
-		// Require a more specific 
-		if ( strict && 
+		// Require a more specific
+		if ( strict &&
 			( ( bestDot < 0.7f ) || ( bestDistance > 40.0f ) ) )
 		{
 			return false;
@@ -560,8 +563,167 @@ void CHL2GameMovement::ReduceTimers( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bOnLadder - 
+// Purpose: Jump
+//-----------------------------------------------------------------------------
+bool CHL2GameMovement::CheckJumpButton( void ) {
+	if (player->pl.deadflag) {
+		mv->m_nOldButtons |= IN_JUMP ;	// don't jump again until released
+		return false;
+	}
+
+	// See if we are waterjumping.  If so, decrement count and return.
+	if (player->m_flWaterJumpTime) {
+		player->m_flWaterJumpTime -= gpGlobals->frametime;
+		if (player->m_flWaterJumpTime < 0)
+			player->m_flWaterJumpTime = 0;
+
+		return false;
+	}
+
+	// If we are in the water most of the way...
+	if ( player->GetWaterLevel() >= 2 ) {
+		// swimming, not jumping
+		SetGroundEntity( NULL );
+
+		if(player->GetWaterType() == CONTENTS_WATER)    // We move up a certain amount
+			mv->m_vecVelocity[2] = 100;
+		else if (player->GetWaterType() == CONTENTS_SLIME)
+			mv->m_vecVelocity[2] = 80;
+
+		// play swiming sound
+		if ( player->m_flSwimSoundTime <= 0 )
+		{
+			// Don't play sound again for 1 second
+			player->m_flSwimSoundTime = 1000;
+			PlaySwimSound();
+		}
+
+		return false;
+	}
+
+	// No more effect
+ 	if (player->GetGroundEntity() == NULL) {
+		mv->m_nOldButtons |= IN_JUMP;
+		return false;		// in air, so no effect
+	}
+
+	// Don't allow jumping when the player is in a stasis field.
+#ifndef HL2_EPISODIC
+	if ( player->m_Local.m_bSlowMovement )
+		return false;
+#endif
+
+	if ( mv->m_nOldButtons & IN_JUMP && !sv_autoBunnyHopping.GetBool() )
+		return false;		// don't pogo stick
+
+	// Cannot jump while in the unduck transition.
+	if ( player->m_Local.m_bDucking && (  player->GetFlags() & FL_DUCKING ) )
+		return false;
+
+	// Still updating the eye position.
+	if ( player->m_Local.m_flDuckJumpTime > 0.0f )
+		return false;
+
+
+	// In the air now.
+    SetGroundEntity( NULL );
+
+	player->PlayStepSound( (Vector &)mv->GetAbsOrigin(), player->m_pSurfaceData, 1.0, true );
+
+	MoveHelper()->PlayerSetAnimation( PLAYER_JUMP );
+
+	float flGroundFactor = 1.0f;
+	if (player->m_pSurfaceData) {
+		flGroundFactor = player->m_pSurfaceData->game.jumpFactor;
+	}
+
+	float flMul;
+	if ( g_bMovementOptimizations ) {
+#if defined(HL2_DLL) || defined(HL2_CLIENT_DLL)
+		Assert( GetCurrentGravity() == 600.0f );
+		flMul = 160.0f;	// approx. 21 units.
+#else
+		Assert( GetCurrentGravity() == 800.0f );
+		flMul = 268.3281572999747f;
+#endif
+	} else {
+		flMul = sqrt(2 * GetCurrentGravity() * GAMEMOVEMENT_JUMP_HEIGHT);
+	}
+
+	// Accelerate upward (FINALLY JUMP)
+	// If we are ducking...
+	float startz = mv->m_vecVelocity[2];
+	if ( (  player->m_Local.m_bDucking ) || (  player->GetFlags() & FL_DUCKING ) ) {
+		// d = 0.5 * g * t^2		- distance traveled with linear accel
+		// t = sqrt(2.0 * 45 / g)	- how long to fall 45 units
+		// v = g * t				- velocity at the end (just invert it to jump up that high)
+		// v = g * sqrt(2.0 * 45 / g )
+		// v^2 = g * g * 2.0 * 45 / g
+		// v = sqrt( g * 2.0 * 45 )
+		mv->m_vecVelocity[2] = flGroundFactor * flMul;  // 2 * gravity * height
+	} else {
+		mv->m_vecVelocity[2] += flGroundFactor * flMul;  // 2 * gravity * height
+	}
+
+	// Add a little forward velocity based on your current forward velocity - if you are not sprinting.
+#if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
+	if ( gpGlobals->maxClients == 1 ) {
+		CHLMoveData *pMoveData = ( CHLMoveData* )mv;
+		Vector vecForward;
+		AngleVectors( mv->m_vecViewAngles, &vecForward );
+		vecForward.z = 0;
+		VectorNormalize( vecForward );
+
+		// We give a certain percentage of the current forward movement as a bonus to the jump speed.  That bonus is clipped
+		// to not accumulate over time.
+		float flSpeedBoostPerc = ( !pMoveData->m_bIsSprinting && !player->m_Local.m_bDucked ) ? 0.5f : 0.1f;
+		float flSpeedAddition = fabs( mv->m_flForwardMove * flSpeedBoostPerc );
+		float flMaxSpeed = mv->m_flMaxSpeed + ( mv->m_flMaxSpeed * flSpeedBoostPerc );
+		float flNewSpeed = ( flSpeedAddition + mv->m_vecVelocity.Length2D() );
+
+		// If we're over the maximum, we want to only boost as much as will get us to the goal speed
+		if ( flNewSpeed > flMaxSpeed )
+		{
+			flSpeedAddition -= flNewSpeed - flMaxSpeed;
+		}
+
+		if ( mv->m_flForwardMove < 0.0f )
+			flSpeedAddition *= -1.0f;
+
+		// Add it on
+		VectorAdd( (vecForward*flSpeedAddition), mv->m_vecVelocity, mv->m_vecVelocity );
+	}
+#endif
+
+	FinishGravity();
+
+	// CheckV( player->CurrentCommandNumber(), "CheckJump", mv->m_vecVelocity );
+
+	mv->m_outJumpVel.z += mv->m_vecVelocity[2] - startz;
+	mv->m_outStepHeight += 0.15f;
+
+	OnJump(mv->m_outJumpVel.z);
+
+	// Set jump time.
+	if ( gpGlobals->maxClients == 1 ) {
+		player->m_Local.m_flJumpTime = GAMEMOVEMENT_JUMP_TIME;
+		player->m_Local.m_bInDuckJump = true;
+	}
+
+#if defined( HL2_DLL )
+	if ( player->GetToggledDuckState() ) {
+		player->ToggleDuck();
+	}
+#endif
+
+	// Flag that we jumped.
+	mv->m_nOldButtons |= IN_JUMP;	// don't jump again until released
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : bOnLadder -
 //-----------------------------------------------------------------------------
 void CHL2GameMovement::FullLadderMove()
 {
@@ -600,7 +762,7 @@ void CHL2GameMovement::FullLadderMove()
 	// Compute parametric distance along ladder vector...
 	float oldt;
 	CalcDistanceSqrToLine( mv->GetAbsOrigin(), topPosition, bottomPosition, &oldt );
-	
+
 	// Perform the move accounting for any base velocity.
 	VectorAdd (mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity);
 	TryPlayerMove();
@@ -655,9 +817,9 @@ void CHL2GameMovement::FullLadderMove()
 	bool neardismountnode2 = ( dist < ladderUnitsPerTick * ladderUnitsPerTick ) ? true : false;
 
 	// Really close to node, cvar is set, and pressing a key, then simulate a +USE
-	bool auto_dismount_use = ( neardismountnode2 && 
-								sv_autoladderdismount.GetBool() && 
-								pressing_forward_or_side && 
+	bool auto_dismount_use = ( neardismountnode2 &&
+								sv_autoladderdismount.GetBool() &&
+								pressing_forward_or_side &&
 								!moving_along_ladder );
 
 	bool fully_underwater = ( player->GetWaterLevel() == WL_Eyes ) ? true : false;
@@ -667,7 +829,7 @@ void CHL2GameMovement::FullLadderMove()
 
 	if ( fully_underwater && !use_dismount )
 	{
-		// If fully underwater, we require looking directly at a dismount node 
+		// If fully underwater, we require looking directly at a dismount node
 		///  to "float off" a ladder mid way...
 		if ( ExitLadderViaDismountNode( ladder, true ) )
 		{
@@ -789,7 +951,7 @@ bool CHL2GameMovement::CheckLadderAutoMountEndPoint( CFuncLadder *ladder, const 
 bool CHL2GameMovement::CheckLadderAutoMountCone( CFuncLadder *ladder, const Vector& bestOrigin, float maxAngleDelta, float maxDistToLadder )
 {
 	// Never 'back' onto ladders or stafe onto ladders
-	if ( ladder != NULL && 
+	if ( ladder != NULL &&
 		( mv->m_flForwardMove > 0.0f ) )
 	{
 		Vector top, bottom;
@@ -830,15 +992,15 @@ bool CHL2GameMovement::CheckLadderAutoMountCone( CFuncLadder *ladder, const Vect
 			dist,
 			maxDistToLadder,
 			(float)fabs( ladderAxis.Dot( m_vecForward ) ),
-			facingDot, 
+			facingDot,
 			angle);
 #endif
 
 		// Tracker 21776:  Don't mount ladders this way if strafing
 		bool strafing = ( fabs( mv->m_flSideMove ) < 1.0f ) ? false : true;
 
-		if ( ( ( facingDot > 0.0f && !strafing ) || facingalongaxis  ) && 
-			( facingladderaxis || reallyclosetoladder ) && 
+		if ( ( ( facingDot > 0.0f && !strafing ) || facingalongaxis  ) &&
+			( facingladderaxis || reallyclosetoladder ) &&
 			closetoladder )
 		{
 			StartForcedMove( true, this->MaxSpeed(), bestOrigin, ladder );
@@ -851,7 +1013,7 @@ bool CHL2GameMovement::CheckLadderAutoMountCone( CFuncLadder *ladder, const Vect
 
 //-----------------------------------------------------------------------------
 // Purpose: Must be facing toward ladder
-// Input  : *ladder - 
+// Input  : *ladder -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CHL2GameMovement::LookingAtLadder( CFuncLadder *ladder )
@@ -874,7 +1036,7 @@ bool CHL2GameMovement::LookingAtLadder( CFuncLadder *ladder )
 	Vector flatForward = m_vecForward;
 	flatForward.z = 0.0f;
 
-	// Because the ladder itself is not a solid, the player's origin may actually be 
+	// Because the ladder itself is not a solid, the player's origin may actually be
 	// permitted to pass it, and that will screw up our dot product.
 	// So back up the player's origin a bit to do the facing calculation.
 	Vector vecAdjustedOrigin = mv->GetAbsOrigin() - 8.0f * flatForward;
@@ -902,8 +1064,8 @@ bool CHL2GameMovement::LookingAtLadder( CFuncLadder *ladder )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &trace - 
+// Purpose:
+// Input  : &trace -
 //-----------------------------------------------------------------------------
 bool CHL2GameMovement::CheckLadderAutoMount( CFuncLadder *ladder, const Vector& bestOrigin )
 {
@@ -930,7 +1092,7 @@ float CHL2GameMovement::MaxSpeed()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CHL2GameMovement::LadderMove( void )
 {
@@ -954,7 +1116,7 @@ bool CHL2GameMovement::LadderMove( void )
 
 	// Something 1) deactivated the ladder...  or 2) something external applied
 	//  a force to us.  In either case  make the player fall, etc.
-	if ( ladder && 
+	if ( ladder &&
 		 ( !ladder->IsEnabled() ||
 		 ( player->GetBaseVelocity().LengthSqr() > 1.0f ) ) )
 	{
@@ -994,7 +1156,7 @@ bool CHL2GameMovement::LadderMove( void )
 					return true;
 				}
 			}
-			
+
 			// Pressing forward while looking at ladder and standing (or floating) near a mounting point
 			if ( mv->m_flForwardMove > 0.0f )
 			{
@@ -1008,7 +1170,7 @@ bool CHL2GameMovement::LadderMove( void )
 		return false;
 	}
 
-	if ( !ladder && 
+	if ( !ladder &&
 		LookingAtLadder( bestLadder ) &&
 		CheckLadderAutoMount( bestLadder, bestOrigin ) )
 	{
@@ -1033,7 +1195,7 @@ bool CHL2GameMovement::LadderMove( void )
 	player->SetMoveCollide( MOVECOLLIDE_DEFAULT );
 
 	player->SetGravity( 0.0f );
-	
+
 	float forwardSpeed = 0.0f;
 	float rightSpeed = 0.0f;
 
@@ -1044,22 +1206,22 @@ bool CHL2GameMovement::LadderMove( void )
 	{
 		forwardSpeed -= speed;
 	}
-	
+
 	if ( mv->m_nButtons & IN_FORWARD )
 	{
 		forwardSpeed += speed;
 	}
-	
+
 	if ( mv->m_nButtons & IN_MOVELEFT )
 	{
 		rightSpeed -= speed;
 	}
-	
+
 	if ( mv->m_nButtons & IN_MOVERIGHT )
 	{
 		rightSpeed += speed;
 	}
-	
+
 	if ( mv->m_nButtons & IN_JUMP )
 	{
 		player->SetMoveType( MOVETYPE_WALK );
@@ -1181,7 +1343,7 @@ void CHL2GameMovement::SetGroundEntity( trace_t *pm )
 
 bool CHL2GameMovement::CanAccelerate()
 {
-#ifdef HL2MP 
+#ifdef HL2MP
 	if ( player->IsObserver() )
 	{
 		return true;

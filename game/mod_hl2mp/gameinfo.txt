@@ -10,8 +10,8 @@
 	supportsvr	1
 	hidden_maps
 	{
-		"test_speakers"		1
-		"test_hardware"		1
+		//"test_speakers"		1
+		//"test_hardware"		1
 	}
 
 

@@ -29,8 +29,7 @@ struct NearbyDismount_t
 //-----------------------------------------------------------------------------
 // Purpose: HL2 specific movement code
 //-----------------------------------------------------------------------------
-class CHL2GameMovement : public CGameMovement
-{
+class CHL2GameMovement : public CGameMovement {
 	typedef CGameMovement BaseClass;
 public:
 
@@ -46,9 +45,8 @@ public:
 	virtual int GetCheckInterval( IntervalType_t type );
 	virtual void	SetGroundEntity( trace_t *pm );
 	virtual bool CanAccelerate( void );
-
+	virtual bool CheckJumpButton( void ) OVERRIDE;
 	virtual float MaxSpeed();
-
 private:
 
 	// See if we are pressing use near a ladder "mount" point and if so, latch us onto the ladder
@@ -86,7 +84,7 @@ private:
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 inline CHL2_Player	*CHL2GameMovement::GetHL2Player()
 {
@@ -94,7 +92,7 @@ inline CHL2_Player	*CHL2GameMovement::GetHL2Player()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : inline LadderMove*
 //-----------------------------------------------------------------------------
 inline LadderMove_t *CHL2GameMovement::GetLadderMove()
@@ -108,8 +106,8 @@ inline LadderMove_t *CHL2GameMovement::GetLadderMove()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *ladder - 
+// Purpose:
+// Input  : *ladder -
 //-----------------------------------------------------------------------------
 inline void CHL2GameMovement::SetLadder( CFuncLadder *ladder )
 {
@@ -133,7 +131,7 @@ inline void CHL2GameMovement::SetLadder( CFuncLadder *ladder )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : CFuncLadder
 //-----------------------------------------------------------------------------
 inline CFuncLadder *CHL2GameMovement::GetLadder()
