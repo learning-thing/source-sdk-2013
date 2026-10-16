@@ -124,7 +124,7 @@ static const char* GetArrowEntityName( ProjectileType_t projectileType )
 		return "tf_projectile_healing_bolt";
 	case TF_PROJECTILE_GRAPPLINGHOOK:
 		return "tf_projectile_grapplinghook";
-	
+
 	default:
 		return "tf_projectile_arrow";
 	}
@@ -171,8 +171,8 @@ void CTFProjectile_Arrow::InitArrow( const QAngle &vecAngles, const float fSpeed
 	AngleVectors( vecAngles, &vecForward, &vecRight, &vecUp );
 
 	Vector vecVelocity = vecForward * fSpeed;
-	
-	SetAbsVelocity( vecVelocity );	
+
+	SetAbsVelocity( vecVelocity );
 	SetupInitialTransmittedGrenadeVelocity( vecVelocity );
 
 	// Setup the initial angles.
@@ -210,7 +210,7 @@ void CTFProjectile_Arrow::Spawn()
 	{
 		SetModel( g_pszArrowModels[MODEL_FESTIVE_ARROW_REGULAR] );
 	}
-	else if ( m_iProjectileType == TF_PROJECTILE_HEALING_BOLT 
+	else if ( m_iProjectileType == TF_PROJECTILE_HEALING_BOLT
 	) {
 		SetModel( g_pszArrowModels[MODEL_SYRINGE] );
 		SetModelScale( 3.0f );
@@ -231,7 +231,7 @@ void CTFProjectile_Arrow::Spawn()
 
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_CUSTOM );
 	UTIL_SetSize( this, Vector( -1.0f, -1.0f, -1.0f ), Vector( 1.0f, 1.0f, 1.0f ) );
-	SetSolid( SOLID_BBOX );	
+	SetSolid( SOLID_BBOX );
 
 	SetCollisionGroup( TFCOLLISION_GROUP_ROCKETS );
 	AddEffects( EF_NOSHADOW );
@@ -292,21 +292,21 @@ CBasePlayer *CTFProjectile_Arrow::GetScorer( void )
 }
 
 //-----------------------------------------------------------------------------
-bool CTFProjectile_Arrow::CanHeadshot() 
-{ 
+bool CTFProjectile_Arrow::CanHeadshot()
+{
 	CBaseEntity *pOwner = GetScorer();
 	if ( pOwner == NULL )
 		return false;
 
-	if ( m_iProjectileType == TF_PROJECTILE_BUILDING_REPAIR_BOLT 
-		|| m_iProjectileType == TF_PROJECTILE_HEALING_BOLT 
-		|| m_iProjectileType == TF_PROJECTILE_FESTIVE_HEALING_BOLT 
+	if ( m_iProjectileType == TF_PROJECTILE_BUILDING_REPAIR_BOLT
+		|| m_iProjectileType == TF_PROJECTILE_HEALING_BOLT
+		|| m_iProjectileType == TF_PROJECTILE_FESTIVE_HEALING_BOLT
 	) {
 		return false;
 	}
 
 
-	return true; 
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -317,7 +317,7 @@ float CTFProjectile_Arrow::GetDamage()
 	if ( m_iProjectileType == TF_PROJECTILE_HEALING_BOLT
 		|| m_iProjectileType == TF_PROJECTILE_FESTIVE_HEALING_BOLT
 	) {
-		float lifeTimeScale = RemapValClamped( gpGlobals->curtime - m_flInitTime, 0.0f, 0.6f, 0.5f, 1.0f );	
+		float lifeTimeScale = RemapValClamped( gpGlobals->curtime - m_flInitTime, 0.0f, 0.6f, 0.5f, 1.0f );
 		return m_flDamage * lifeTimeScale;
 	}
 	return BaseClass::GetDamage();
@@ -394,24 +394,21 @@ void CTFProjectile_Arrow::GetBoneAttachmentInfo( mstudiobbox_t *pBox, CBaseAnima
 }
 
 //-----------------------------------------------------------------------------
-int	CTFProjectile_Arrow::GetProjectileType ( void ) const	
-{ 
+int	CTFProjectile_Arrow::GetProjectileType ( void ) const
+{
 	return m_iProjectileType;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-bool CTFProjectile_Arrow::StrikeTarget( mstudiobbox_t *pBox, CBaseEntity *pOther )
-{
+bool CTFProjectile_Arrow::StrikeTarget( mstudiobbox_t *pBox, CBaseEntity *pOther ) {
 	if ( !pOther )
 		return false;
 
 	// Different path for arrows that heal friendly buildings.
-	if ( pOther->IsBaseObject() )
-	{
-		if ( OnArrowImpactObject( pOther ) )
-		{
+	if ( pOther->IsBaseObject() ) {
+		if ( OnArrowImpactObject( pOther ) ) {
 			return false;
 		}
 	}
@@ -428,10 +425,8 @@ bool CTFProjectile_Arrow::StrikeTarget( mstudiobbox_t *pBox, CBaseEntity *pOther
 	bool bBreakArrow = IsBreakable() && ( ( dynamic_cast< CTFTankBoss* >( pOther ) != NULL ) || ( dynamic_cast< CHalloweenBaseBoss* >( pOther ) != NULL ) );
 
 	// Position the arrow so its on the bone, within a reasonable region defined by the bbox.
-	if ( !m_bPenetrate && !bBreakArrow )
-	{
-		if ( !PositionArrowOnBone( pBox, pOtherAnim ) )
-		{
+	if ( !m_bPenetrate && !bBreakArrow ) {
+		if ( !PositionArrowOnBone( pBox, pOtherAnim ) ) {
 			return false;
 		}
 	}
@@ -457,7 +452,7 @@ bool CTFProjectile_Arrow::StrikeTarget( mstudiobbox_t *pBox, CBaseEntity *pOther
 		// likely not launched by a player
 		pAttacker = GetOwnerEntity();
 	}
-	
+
 	if ( pAttacker )
 	{
 		// Check if we have the penetrate attribute.  We don't want
@@ -569,7 +564,7 @@ bool CTFProjectile_Arrow::StrikeTarget( mstudiobbox_t *pBox, CBaseEntity *pOther
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::OnArrowImpact( mstudiobbox_t *pBox, CBaseEntity *pOther, CBaseEntity *pAttacker )
 {
@@ -628,7 +623,7 @@ void CTFProjectile_Arrow::OnArrowImpact( mstudiobbox_t *pBox, CBaseEntity *pOthe
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFProjectile_Arrow::OnArrowImpactObject( CBaseEntity *pOther )
 {
@@ -641,7 +636,7 @@ bool CTFProjectile_Arrow::OnArrowImpactObject( CBaseEntity *pOther )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::ImpactThink( void )
 {
@@ -689,7 +684,7 @@ void CTFProjectile_Arrow::BuildingHealingArrow( CBaseEntity *pOther )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int	CTFProjectile_Arrow::GetArrowSkin() const
 {
@@ -707,7 +702,7 @@ int	CTFProjectile_Arrow::GetArrowSkin() const
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::OnArrowMissAllPlayers()
 {
@@ -720,7 +715,7 @@ void CTFProjectile_Arrow::OnArrowMissAllPlayers()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::ArrowTouch( CBaseEntity *pOther )
 {
@@ -729,8 +724,7 @@ void CTFProjectile_Arrow::ArrowTouch( CBaseEntity *pOther )
 	// are repeat-offenders at not getting along with them.
 	// If enough time goes by, just remove the arrow.
 	float flAliveTime = gpGlobals->curtime - m_flInitTime;
-	if ( flAliveTime >= 10.f )
-	{
+	if ( flAliveTime >= 10.f ) {
 		Warning( "Arrow alive for %f3.2\n seconds", flAliveTime );
 		UTIL_Remove( this );
 	}
@@ -750,12 +744,10 @@ void CTFProjectile_Arrow::ArrowTouch( CBaseEntity *pOther )
 	// test against combat characters, which include players, engineer buildings, and NPCs
 	CBaseCombatCharacter *pOtherCombatCharacter = dynamic_cast< CBaseCombatCharacter * >( pOther );
 
-	if ( !pOtherCombatCharacter )
-	{
+	if ( !pOtherCombatCharacter ) {
 		// It might be a track train with boss parented
 		pOtherCombatCharacter = dynamic_cast< CBaseCombatCharacter * >( pOther->FirstMoveChild() );
-		if ( pOtherCombatCharacter )
-		{
+		if ( pOtherCombatCharacter ) {
 			pOther = pOtherCombatCharacter;
 		}
 	}
@@ -869,7 +861,7 @@ void CTFProjectile_Arrow::ArrowTouch( CBaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::CheckSkyboxImpact( CBaseEntity *pOther )
 {
@@ -959,7 +951,7 @@ void CTFProjectile_Arrow::ImpactSound( const char *pszSoundName, bool bLoudForAt
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::BreakArrow()
 {
@@ -974,7 +966,7 @@ void CTFProjectile_Arrow::BreakArrow()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFProjectile_Arrow::CheckRagdollPinned( const Vector &start, const Vector &vel, int boneIndexAttached, int physicsBoneIndex, CBaseEntity *pOther, int iHitGroup, int iVictim )
 {
@@ -1009,7 +1001,7 @@ bool CTFProjectile_Arrow::CheckRagdollPinned( const Vector &start, const Vector 
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::FadeOut( int iTime )
 {
@@ -1023,7 +1015,7 @@ void CTFProjectile_Arrow::FadeOut( int iTime )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::RemoveThink( void )
 {
@@ -1034,7 +1026,7 @@ void CTFProjectile_Arrow::RemoveThink( void )
 const char *CTFProjectile_Arrow::GetTrailParticleName( void )
 {
 	if ( m_iProjectileType == TF_PROJECTILE_BUILDING_REPAIR_BOLT )
-	{	
+	{
 		return ( GetTeamNumber() == TF_TEAM_RED ) ? CLAW_TRAIL_RED : CLAW_TRAIL_BLU;
 	}
 	else if ( m_iProjectileType == TF_PROJECTILE_HEALING_BOLT || m_iProjectileType == TF_PROJECTILE_FESTIVE_HEALING_BOLT )
@@ -1046,7 +1038,7 @@ const char *CTFProjectile_Arrow::GetTrailParticleName( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::CreateTrail( void )
 {
@@ -1066,7 +1058,7 @@ void CTFProjectile_Arrow::CreateTrail( void )
 			case TF_PROJECTILE_GRAPPLINGHOOK:
 				return; // do not create arrow trail for healing bolt, use particle instead (client only)
 		}
-		
+
 		const char *pTrailTeamName = GetTrailParticleName();
 		CSpriteTrail *pTempTrail = NULL;
 
@@ -1098,7 +1090,7 @@ void CTFProjectile_Arrow::RemoveTrail( void )
 			UTIL_Remove( m_pTrail );
 			m_flTrailLife = 1.0f;
 		}
-		else	
+		else
 		{
 			float fAlpha = 128 * m_flTrailLife;
 
@@ -1116,7 +1108,7 @@ void CTFProjectile_Arrow::RemoveTrail( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::AdjustDamageDirection( const CTakeDamageInfo &info, Vector &dir, CBaseEntity *pEnt )
 {
@@ -1131,7 +1123,7 @@ void CTFProjectile_Arrow::AdjustDamageDirection( const CTakeDamageInfo &info, Ve
 //-----------------------------------------------------------------------------
 void CTFProjectile_Arrow::IncrementDeflected( void )
 {
-	m_iDeflected++; 
+	m_iDeflected++;
 
 	// Change trail color.
 	if ( m_pTrail )
@@ -1226,7 +1218,7 @@ void CTFProjectile_HealingBolt::ImpactTeamPlayer( CTFPlayer *pOther )
 	{
 		CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pActiveWeapon, flHealth, mult_health_fromhealers_penalty_active );
 	}
-	
+
 	int iActualHealed = pOther->TakeHealth( flHealth, DMG_GENERIC );
 	if ( iActualHealed <= 0 )
 		return;
@@ -1240,7 +1232,7 @@ void CTFProjectile_HealingBolt::ImpactTeamPlayer( CTFPlayer *pOther )
 	if ( event )
 	{
 		// HLTV event priority, not transmitted
-		event->SetInt( "priority", 1 );	
+		event->SetInt( "priority", 1 );
 
 		// Healed by another player.
 		event->SetInt( "patient", pOther->GetUserID() );
@@ -1260,7 +1252,7 @@ void CTFProjectile_HealingBolt::ImpactTeamPlayer( CTFPlayer *pOther )
 			healingItemDef = pWeapon->GetAttributeContainer()->GetItem()->GetItemDefIndex();
 		}
 		event->SetInt( "weapon_def_index", healingItemDef );
-		gameeventmanager->FireEvent( event ); 
+		gameeventmanager->FireEvent( event );
 	}
 
 	event = gameeventmanager->CreateEvent( "crossbow_heal" );
@@ -1269,7 +1261,7 @@ void CTFProjectile_HealingBolt::ImpactTeamPlayer( CTFPlayer *pOther )
 		event->SetInt( "healer", pOwner->GetUserID() );
 		event->SetInt( "target", pOther->GetUserID() );
 		event->SetInt( "amount", flHealth );
-		gameeventmanager->FireEvent( event ); 
+		gameeventmanager->FireEvent( event );
 	}
 
 	// Add ubercharge based on amount healed
@@ -1407,10 +1399,8 @@ void CTFProjectile_GrapplingHook::CheckSkyboxImpact( CBaseEntity *pOther )
 //-----------------------------------------------------------------------------
 // Purpose: HookTarget
 //-----------------------------------------------------------------------------
-void CTFProjectile_GrapplingHook::HookTarget( CBaseEntity *pOther )
-{
-	if ( !GetOwnerEntity() || !pOther )
-		return;
+void CTFProjectile_GrapplingHook::HookTarget( CBaseEntity *pOther ) {
+	if ( !GetOwnerEntity() || !pOther ) return;
 
 	CTFPlayer *pTFPlayer = ToTFPlayer( GetOwnerEntity() );
 	if ( !pTFPlayer || pTFPlayer->GetGrapplingHookTarget() )
@@ -1418,8 +1408,7 @@ void CTFProjectile_GrapplingHook::HookTarget( CBaseEntity *pOther )
 
 	CBaseEntity *pTarget = pOther->IsWorld() ? this : pOther;
 	const char *pszSoundName = NULL;
-	if ( pTarget->IsPlayer() )
-	{
+	if ( pTarget->IsPlayer() ) {
 		pszSoundName = "WeaponGrapplingHook.ImpactFlesh";
 	}
 	else
@@ -1463,7 +1452,7 @@ void CTFProjectile_GrapplingHook::HookLatchedThink()
 		UTIL_Remove( this );
 		return;
 	}
-	
+
 	SetContextThink( &CTFProjectile_GrapplingHook::HookLatchedThink, gpGlobals->curtime + 0.1f, "HookLatchedThink" );
 }
 

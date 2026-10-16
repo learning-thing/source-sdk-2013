@@ -8,8 +8,7 @@
 #include "protoutils.h"
 
 //-----------------------------------------------------------------------------
-void ITFGroupMatchCriteriaReader::GetMvMMissionSet( CMvMMissionSet &challenges, bool bMannup ) const
-{
+void ITFGroupMatchCriteriaReader::GetMvMMissionSet( CMvMMissionSet &challenges, bool bMannup ) const {
 	challenges.Clear();
 
 	// Use our pending changes if we've set them. Note that we cannot really clear repeated fields with merged-message

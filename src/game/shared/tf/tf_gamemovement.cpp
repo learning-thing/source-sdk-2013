@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -94,14 +94,13 @@ extern ConVar mp_tournament_readymode_countdown;
 #define	NUM_CROUCH_HINTS	3
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose: Team Fortress Game Movement
 //-----------------------------------------------------------------------------
-class CTFGameMovement : public CGameMovement
-{
+class CTFGameMovement : public CGameMovement {
 public:
 	DECLARE_CLASS( CTFGameMovement, CGameMovement );
 
-	CTFGameMovement(); 
+	CTFGameMovement();
 
 	virtual void PlayerMove();
 	virtual unsigned int PlayerSolidMask( bool brushOnly = false );
@@ -223,7 +222,7 @@ void CTFGameMovement::PlayerMove()
 				trace_t tr;
 				// see if we hit anything solid a little bit below the player
 				UTIL_TraceLine( vecStart, vecEnd, MASK_SOLID,m_pTFPlayer, COLLISION_GROUP_NONE, &tr );
-				if ( tr.fraction >= 1.0f ) 
+				if ( tr.fraction >= 1.0f )
 				{
 					// some amount of water below the player, play a splash
 					bPlaySplash = true;
@@ -234,7 +233,7 @@ void CTFGameMovement::PlayerMove()
 			{
 				m_pTFPlayer->EmitSound( "Physics.WaterSplash" );
 			}
-		} 
+		}
 	}
 
 	// Remove our shield charge if we slow down a bunch.
@@ -246,7 +245,7 @@ void CTFGameMovement::PlayerMove()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose: Player camera position
 //-----------------------------------------------------------------------------
 Vector CTFGameMovement::GetPlayerViewOffset( bool ducked ) const
 {
@@ -286,8 +285,7 @@ unsigned int CTFGameMovement::PlayerSolidMask( bool brushOnly )
 //-----------------------------------------------------------------------------
 // Purpose: Overridden to allow players to run faster than the maxspeed
 //-----------------------------------------------------------------------------
-void CTFGameMovement::ProcessMovement( CBasePlayer *pBasePlayer, CMoveData *pMove )
-{
+void CTFGameMovement::ProcessMovement( CBasePlayer *pBasePlayer, CMoveData *pMove ) {
 	// Verify data.
 	Assert( pBasePlayer );
 	Assert( pMove );
@@ -337,10 +335,9 @@ void CTFGameMovement::ProcessMovement( CBasePlayer *pBasePlayer, CMoveData *pMov
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-bool CTFGameMovement::GrapplingHookMove()
-{
+bool CTFGameMovement::GrapplingHookMove() {
 	CBaseEntity *pHookTarget = m_pTFPlayer->GetGrapplingHookTarget();
 
 	if ( !pHookTarget )
@@ -463,7 +460,7 @@ bool CTFGameMovement::GrapplingHookMove()
 		}
 	}
 
-	// slow down when player is close to the hook target to prevent yoyo effect 
+	// slow down when player is close to the hook target to prevent yoyo effect
 	float flDistSqrToTarget = m_pTFPlayer->GetAbsOrigin().DistToSqr( pHookTarget->GetAbsOrigin() );
 	if ( flDistSqrToTarget < 10000 )
 	{
@@ -479,7 +476,7 @@ bool CTFGameMovement::GrapplingHookMove()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFGameMovement::ChargeMove()
 {
@@ -532,12 +529,12 @@ bool CTFGameMovement::ChargeMove()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFGameMovement::StunMove()
 {
 	// Handle control stun.
-	if ( m_pTFPlayer->m_Shared.IsControlStunned() 
+	if ( m_pTFPlayer->m_Shared.IsControlStunned()
 		|| m_pTFPlayer->m_Shared.IsLoserStateStunned() )
 	{
 		bool bAttackButtonDown = ( mv->m_nButtons & IN_ATTACK2 || mv->m_nButtons & IN_ATTACK );
@@ -612,7 +609,7 @@ bool CTFGameMovement::StunMove()
 	}
 
 	// No one can move when in a final countdown transition or with the ConTracker open.
-	// Do this here to avoid the inevitable hack that prevents players 
+	// Do this here to avoid the inevitable hack that prevents players
 	// from receiving a flag or condition by stalling thinks, etc.
 	if ( m_pTFPlayer->IsViewingCYOAPDA() || ( TFGameRules() && TFGameRules()->BInMatchStartCountdown() ) )
 	{
@@ -628,7 +625,7 @@ bool CTFGameMovement::StunMove()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFGameMovement::TauntMove( void )
 {
@@ -694,7 +691,7 @@ bool CTFGameMovement::TauntMove( void )
 		{
 			flMaxMoveSpeed = 0.f;
 		}
-			
+
 		float flSmoothMoveSpeed = 0.f;
 		if ( flMaxMoveSpeed > 0.f )
 		{
@@ -733,7 +730,7 @@ ConVar tf_halloween_kart_coast_accel( "tf_halloween_kart_coast_accel", "300", FC
 ConVar tf_halloween_kart_bombhead_scale( "tf_halloween_kart_bombhead_scale", "1.5f", FCVAR_CHEAT | FCVAR_REPLICATED );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::VehicleMove( void )
 {
@@ -803,7 +800,7 @@ void CTFGameMovement::VehicleMove( void )
 			m_pTFPlayer->m_iKartState |= CTFPlayerShared::kKartState_Braking;
 		}
 		// if we are already stopped, look for new input to start going backwards
-		else 
+		else
 		{
 			// check for new input, else do nothing
 			if ( mv->m_flOldForwardMove >= 0.0f  || m_pTFPlayer->GetCurrentTauntMoveSpeed() < 0 || m_pTFPlayer->GetVehicleReverseTime() < gpGlobals->curtime )
@@ -830,7 +827,7 @@ void CTFGameMovement::VehicleMove( void )
 
 		bInput = true;
 	}
-	
+
 	if ( m_pTFPlayer->GetCurrentTauntMoveSpeed() > 0 )
 	{
 		m_pTFPlayer->SetVehicleReverseTime( FLT_MAX );
@@ -871,7 +868,7 @@ void CTFGameMovement::VehicleMove( void )
 	engine->Con_NPrintf( 1, "Target: %3.2f", flTargetSpeed );
 	engine->Con_NPrintf( 2, "Accell: %3.2f", flAcceleration );
 #endif
-			
+
 	mv->m_flMaxSpeed = flMaxMoveSpeed;
 	mv->m_flForwardMove = flSmoothMoveSpeed;
 	mv->m_flClientMaxSpeed = flMaxMoveSpeed;
@@ -879,7 +876,7 @@ void CTFGameMovement::VehicleMove( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFGameMovement::HighMaxSpeedMove()
 {
@@ -911,7 +908,7 @@ bool CTFGameMovement::HighMaxSpeedMove()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFGameMovement::CanAccelerate()
 {
@@ -926,7 +923,7 @@ bool CTFGameMovement::CanAccelerate()
 		return true;
 	}
 	else
-	{	
+	{
 		return false;
 	}
 }
@@ -951,7 +948,7 @@ bool CTFGameMovement::CheckWaterJumpButton( void )
 
 	// In water above our waist.
 	if ( player->GetWaterLevel() >= 2 || m_pTFPlayer->m_Shared.InCond( TF_COND_SWIMMING_NO_EFFECTS ) )
-	{	
+	{
 		// Swimming, not jumping.
 		SetGroundEntity( NULL );
 
@@ -987,10 +984,9 @@ bool CTFGameMovement::CheckWaterJumpButton( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CTFGameMovement::AirDash( void )
-{
+void CTFGameMovement::AirDash( void ) {
 	// Apply approx. the jump velocity added to an air dash.
 	Assert( GetCurrentGravity() == 800.0f );
 
@@ -999,34 +995,31 @@ void CTFGameMovement::AirDash( void )
 	CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( m_pTFPlayer, flJumpMod, mod_jump_height );
 	// Weapon-restricted version
 	CTFWeaponBase *pWpn = m_pTFPlayer->GetActiveTFWeapon();
-	if ( pWpn )
-	{
+	if ( pWpn ) {
 		CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pWpn, flJumpMod, mod_jump_height_from_weapon );
 	}
 
 	// Lose hype on airdash
 	int iHypeResetsOnJump = 0;
 	CALL_ATTRIB_HOOK_INT_ON_OTHER( m_pTFPlayer, iHypeResetsOnJump, hype_resets_on_jump );
-	if ( iHypeResetsOnJump != 0 )
-	{
+	if ( iHypeResetsOnJump != 0 ) {
 		// Loose x hype on jump
 		float flHype = m_pTFPlayer->m_Shared.GetScoutHypeMeter();
 		m_pTFPlayer->m_Shared.SetScoutHypeMeter( flHype - iHypeResetsOnJump );
 		m_pTFPlayer->TeamFortress_SetSpeed();
 	}
 
-	if ( m_pTFPlayer->m_Shared.GetCarryingRuneType() == RUNE_AGILITY )
-	{
+	if ( m_pTFPlayer->m_Shared.GetCarryingRuneType() == RUNE_AGILITY ) {
 		flJumpMod *= 1.8f;
 	}
 
-  	float flDashZ = 268.3281572999747f * flJumpMod;
+  	float flDashZ = 256.0f;// Set fixed up vel on doubleJump
 
 	// Get the wish direction.
 	Vector vecForward, vecRight;
 	AngleVectors( mv->m_vecViewAngles, &vecForward, &vecRight, NULL );
 	vecForward.z = 0.0f;
-	vecRight.z = 0.0f;		
+	vecRight.z = 0.0f;
 	VectorNormalize( vecForward );
 	VectorNormalize( vecRight );
 
@@ -1036,16 +1029,15 @@ void CTFGameMovement::AirDash( void )
 
 	// Find the direction,velocity in the x,y plane.
 	Vector vecWishDirection( ( ( vecForward.x * flForwardMove ) + ( vecRight.x * flSideMove ) ),
-		                     ( ( vecForward.y * flForwardMove ) + ( vecRight.y * flSideMove ) ), 
+		                     ( ( vecForward.y * flForwardMove ) + ( vecRight.y * flSideMove ) ),
 		                     0.0f );
-	
+
 	// Update the velocity on the scout.
-	mv->m_vecVelocity = vecWishDirection;
-	mv->m_vecVelocity.z += flDashZ;
+	// mv->m_vecVelocity = vecWishDirection;
+	mv->m_vecVelocity.z = flDashZ;
 
 	int iAirDash = m_pTFPlayer->m_Shared.GetAirDash();
-	if ( iAirDash == 0 )
-	{
+	if ( iAirDash == 0 ) {
 #if defined(GAME_DLL)
 		// Our first air jump.
 		m_pTFPlayer->SpeakConceptIfAllowed( MP_CONCEPT_DOUBLE_JUMP, "started_jumping:1" );
@@ -1065,8 +1057,7 @@ void CTFGameMovement::AirDash( void )
  	m_pTFPlayer->DoAnimationEvent( PLAYERANIMEVENT_DOUBLEJUMP );
 #ifdef GAME_DLL
 	// Pitch shift a sound for all airdashes greater then 1
-	if ( iAirDash > 0 )
-	{
+	if ( iAirDash > 0 ) {
 		EmitSound_t params;
 		params.m_pSoundName = "General.banana_slip";
 		params.m_flSoundTime = 0;
@@ -1086,18 +1077,18 @@ void CTFGameMovement::AirDash( void )
 // Only allow bunny jumping up to 1.2x server / player maxspeed setting
 #define BUNNYJUMP_MAX_SPEED_FACTOR 1.2f
 
+extern ConVar sv_autoBunnyHopping;
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CTFGameMovement::PreventBunnyJumping()
-{
-	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_KART ) )
-		return;
+void CTFGameMovement::PreventBunnyJumping() {
+	if (sv_autoBunnyHopping.GetBool()) return;
+
+	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_KART ) ) return;
 
 	// Speed at which bunny jumping is limited
 	float maxscaledspeed = BUNNYJUMP_MAX_SPEED_FACTOR * player->m_flMaxspeed;
-	if ( maxscaledspeed <= 0.0f )
-		return;
+	if ( maxscaledspeed <= 0.0f ) return;
 
 	// Current player speed
 	float spd = mv->m_vecVelocity.Length();
@@ -1112,16 +1103,14 @@ void CTFGameMovement::PreventBunnyJumping()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CTFGameMovement::ToggleParachute()
-{
+void CTFGameMovement::ToggleParachute() {
 	if ( mv->m_nOldButtons & IN_JUMP )
 		return;
 
 	// Can not add if in kart (Kart code does it for spell) but players can manually undeploy
-	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_KART ) )
-	{
+	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_KART ) ) {
 		if ( m_pTFPlayer->m_Shared.InCond( TF_COND_PARACHUTE_ACTIVE ) )
 		{
 			m_pTFPlayer->m_Shared.RemoveCond( TF_COND_PARACHUTE_ACTIVE );
@@ -1133,15 +1122,11 @@ void CTFGameMovement::ToggleParachute()
 	int iParachute = 0;
 	// Passive version
 	CALL_ATTRIB_HOOK_INT_ON_OTHER( m_pTFPlayer, iParachute, parachute_attribute );
-	if ( iParachute )
-	{
+	if ( iParachute ) {
 		// Toggle between the conditions
-		if ( m_pTFPlayer->m_Shared.InCond( TF_COND_PARACHUTE_ACTIVE ) )
-		{
+		if ( m_pTFPlayer->m_Shared.InCond( TF_COND_PARACHUTE_ACTIVE ) ) {
 			m_pTFPlayer->m_Shared.RemoveCond( TF_COND_PARACHUTE_ACTIVE );
-		}
-		else
-		{
+		} else {
 			bool bOnGround = ( m_pTFPlayer->GetFlags() & FL_ONGROUND );
 			int iParachuteDisabled = 0;
 			CALL_ATTRIB_HOOK_INT_ON_OTHER( m_pTFPlayer, iParachuteDisabled, parachute_disabled );
@@ -1155,31 +1140,25 @@ void CTFGameMovement::ToggleParachute()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-bool CTFGameMovement::CheckJumpButton()
-{
+bool CTFGameMovement::CheckJumpButton() {
 	// Are we dead?  Then we cannot jump.
-	if ( player->pl.deadflag )
-		return false;
+	if ( player->pl.deadflag ) return false;
 
 	// Check to see if we are in water.
-	if ( !CheckWaterJumpButton() )
-		return false;
+	if ( !CheckWaterJumpButton() ) return false;
 
-	if ( m_pTFPlayer->GetGrapplingHookTarget() && m_pTFPlayer->GetPlayerClass()->GetClassIndex() != TF_CLASS_HEAVYWEAPONS )
-	{
+	if ( m_pTFPlayer->GetGrapplingHookTarget() && m_pTFPlayer->GetPlayerClass()->GetClassIndex() != TF_CLASS_HEAVYWEAPONS ) {
 		float flStartZ = mv->m_vecVelocity[2];
 		mv->m_vecVelocity[2] += tf_grapplinghook_jump_up_speed.GetFloat();
 
 		// Powered up flag carriers get a jump height penalty except Agility
-		if ( m_pTFPlayer->m_Shared.GetCarryingRuneType() != RUNE_AGILITY && m_pTFPlayer->m_Shared.GetCarryingRuneType() != RUNE_NONE && m_pTFPlayer->HasTheFlag() )
-		{
+		if ( m_pTFPlayer->m_Shared.GetCarryingRuneType() != RUNE_AGILITY && m_pTFPlayer->m_Shared.GetCarryingRuneType() != RUNE_NONE && m_pTFPlayer->HasTheFlag() ) {
 			mv->m_vecVelocity[2] *= 0.80f;
 		}
 
-		if ( mv->m_vecVelocity[2] > GetAirSpeedCap() )
-			mv->m_vecVelocity[2] = GetAirSpeedCap();
+		if ( mv->m_vecVelocity[2] > GetAirSpeedCap() ) mv->m_vecVelocity[2] = GetAirSpeedCap();
 
 		// Apply gravity.
 		FinishGravity();
@@ -1192,8 +1171,7 @@ bool CTFGameMovement::CheckJumpButton()
 	}
 
 	// holding jump key will make ghost fly
-	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_GHOST_MODE ) )
-	{
+	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_GHOST_MODE ) ) {
 		float flStartZ = mv->m_vecVelocity[2];
 		mv->m_vecVelocity[2] = tf_ghost_up_speed.GetFloat();
 
@@ -1207,52 +1185,33 @@ bool CTFGameMovement::CheckJumpButton()
 	}
 
 	// Can I jump?
-	if ( !m_pTFPlayer->CanJump() )
-		return false;
+	if ( !m_pTFPlayer->CanJump() ) return false;
 
 	// Check to see if the player is a scout.
 	bool bScout = m_pTFPlayer->GetPlayerClass()->IsClass( TF_CLASS_SCOUT );
 	bool bAirDash = false;
 	bool bOnGround = ( player->GetGroundEntity() != NULL );
+	bool bunnyHopped = false;
 
 	ToggleParachute();
 
-	// Cannot jump will ducked.
-	if ( player->GetFlags() & FL_DUCKING )
-	{
-		// Let a scout do it.
-		bool bAllow = ( bScout && !bOnGround );
-
-		if ( !bAllow )
-			return false;
-	}
-
-	// Cannot jump while in the unduck transition.
-	if ( ( player->m_Local.m_bDucking && (  player->GetFlags() & FL_DUCKING ) ) || ( player->m_Local.m_flDuckJumpTime > 0.0f ) )
-		return false;
-
 	// Cannot jump again until the jump button has been released.
-	if ( mv->m_nOldButtons & IN_JUMP )
-		return false;
+	if ( mv->m_nOldButtons & IN_JUMP && (!sv_autoBunnyHopping.GetBool())) return false;
 
-	// In air, so ignore jumps 
+	// In air, so ignore jumps
 	// (unless you are a scout or ghost or parachute
-	if ( !bOnGround )
-	{
-		if ( m_pTFPlayer->CanAirDash() )
-		{
+	if ( !bOnGround ) {
+		// Only airdash if we just pressed
+		if ( m_pTFPlayer->CanAirDash() && (!(mv->m_nOldButtons & IN_JUMP)) ) {
 			bAirDash = true;
-		}
-		else
-		{
+		} else {
 			mv->m_nOldButtons |= IN_JUMP;
 			return false;
 		}
 	}
 
 	// Check for an air dash.
-	if ( bAirDash )
-	{
+	if ( bAirDash ) {
  		AirDash();
 		// Reset air duck for Scouts on AirDash.
 		m_pTFPlayer->m_Shared.SetAirDucked( 0 );
@@ -1266,8 +1225,7 @@ bool CTFGameMovement::CheckJumpButton()
 	player->PlayStepSound( (Vector &)mv->GetAbsOrigin(), player->m_pSurfaceData, 1.0, true );
 	m_pTFPlayer->m_Shared.SetJumping( true );
 
-	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_KART ) )
-	{
+	if ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_KART ) ) {
 		m_pTFPlayer->EmitSound( "BumperCar.Jump" );
 	}
 
@@ -1276,9 +1234,8 @@ bool CTFGameMovement::CheckJumpButton()
 
 	// Check the surface the player is standing on to see if it impacts jumping.
 	float flGroundFactor = 1.0f;
-	if ( player->m_pSurfaceData )
-	{
-		flGroundFactor = player->m_pSurfaceData->game.jumpFactor; 
+	if ( player->m_pSurfaceData ) {
+		flGroundFactor = player->m_pSurfaceData->game.jumpFactor;
 	}
 
 	// fMul = sqrt( 2.0 * gravity * jump_height (21.0units) ) * GroundFactor
@@ -1294,8 +1251,7 @@ bool CTFGameMovement::CheckJumpButton()
 	CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( m_pTFPlayer, flJumpMod, mod_jump_height );
 	// Weapon-restricted version
 	CTFWeaponBase *pWpn = m_pTFPlayer->GetActiveTFWeapon();
-	if ( pWpn )
-	{
+	if ( pWpn ) {
 		CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pWpn, flJumpMod, mod_jump_height_from_weapon );
 	}
 /*
@@ -1304,22 +1260,20 @@ bool CTFGameMovement::CheckJumpButton()
 	{
 		flJumpMod *= tf_space_gravity_jump_multipler.GetFloat();
 	}
-	
+
 #endif // STAGING_ONLY
 */
-	if ( m_pTFPlayer->m_Shared.GetCarryingRuneType() == RUNE_AGILITY )
-	{
+	if ( m_pTFPlayer->m_Shared.GetCarryingRuneType() == RUNE_AGILITY ) {
 		flJumpMod *= 1.8f;
 	}
-	
+
 	float flMul = ( 289.0f * flJumpMod ) * flGroundFactor;
 
 	// Save the current z velocity.
 	float flStartZ = mv->m_vecVelocity[2];
 
 	// Acclerate upward
-	if ( (  player->m_Local.m_bDucking ) || (  player->GetFlags() & FL_DUCKING ) )
-	{
+	if ( (  player->m_Local.m_bDucking ) || (  player->GetFlags() & FL_DUCKING ) ) {
 		// If we are ducking...
 		// d = 0.5 * g * t^2		- distance traveled with linear accel
 		// t = sqrt(2.0 * 45 / g)	- how long to fall 45 units
@@ -1328,9 +1282,7 @@ bool CTFGameMovement::CheckJumpButton()
 		// v^2 = g * g * 2.0 * 45 / g
 		// v = sqrt( g * 2.0 * 45 )
 		mv->m_vecVelocity[2] = flMul;  // 2 * gravity * jump_height * ground_factor
-	}
-	else
-	{
+	} else {
 		mv->m_vecVelocity[2] += flMul;  // 2 * gravity * jump_height * ground_factor
 	}
 
@@ -1347,7 +1299,7 @@ bool CTFGameMovement::CheckJumpButton()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CTFGameMovement::CheckStuck( void )
 {
@@ -1362,12 +1314,9 @@ int CTFGameMovement::CheckStuck( void )
 		TracePlayerBBox( originalPos, originalPos, PlayerSolidMask(), COLLISION_GROUP_PLAYER_MOVEMENT, traceresult );
 
 #ifdef GAME_DLL
-		if ( TFGameRules() && TFGameRules()->IsMannVsMachineMode() && m_pTFPlayer && m_pTFPlayer->GetTeamNumber() == TF_TEAM_PVE_INVADERS )
-		{
-			if ( traceresult.startsolid )
-			{
-				if ( m_pTFPlayer->m_playerMovementStuckTimer.HasStarted() && m_pTFPlayer->m_playerMovementStuckTimer.IsElapsed() )
-				{
+		if ( TFGameRules() && TFGameRules()->IsMannVsMachineMode() && m_pTFPlayer && m_pTFPlayer->GetTeamNumber() == TF_TEAM_PVE_INVADERS ) {
+			if ( traceresult.startsolid ) {
+				if ( m_pTFPlayer->m_playerMovementStuckTimer.HasStarted() && m_pTFPlayer->m_playerMovementStuckTimer.IsElapsed() ) {
 					DevMsg( "%3.2f: A robot is interpenetrating a solid - killed!\n", gpGlobals->curtime );
 
 					UTIL_LogPrintf( "\"%s<%i><%s><%s>\" startsolid killed (position \"%3.2f %3.2f %3.2f\")\n",
@@ -1378,17 +1327,13 @@ int CTFGameMovement::CheckStuck( void )
 						m_pTFPlayer->GetAbsOrigin().x, m_pTFPlayer->GetAbsOrigin().y, m_pTFPlayer->GetAbsOrigin().z );
 
 					m_pTFPlayer->CommitSuicide( false, true );
-				}
-				else
-				{
+				} else {
 					if ( traceresult.m_pEnt )
 					{
 						Warning( "Robot's getting stuck with %s\n", traceresult.m_pEnt->GetClassname() );
 					}
 				}
-			}
-			else
-			{
+			} else {
 				// Bot is *not* stuck right now. Continually restart timer, so if we become stuck it will count down and expire.
 				const float stuckTooLongTime = 10.0f;
 				m_pTFPlayer->m_playerMovementStuckTimer.Start( stuckTooLongTime );
@@ -1447,10 +1392,9 @@ int CTFGameMovement::CheckStuck( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-bool CTFGameMovement::CheckWater( void )
-{
+bool CTFGameMovement::CheckWater( void ) {
 	Vector vecPlayerMin = GetPlayerMins();
 	Vector vecPlayerMax = GetPlayerMaxs();
 
@@ -1464,9 +1408,8 @@ bool CTFGameMovement::CheckWater( void )
 	int wt = CONTENTS_EMPTY;
 
 	// Check to see if our feet are underwater.
-	int nContents = GetPointContentsCached( vecPoint, 0 );	
-	if ( nContents & MASK_WATER )
-	{
+	int nContents = GetPointContentsCached( vecPoint, 0 );
+	if ( nContents & MASK_WATER ) {
 		// Clear our jump flag, because we have landed in water.
 		m_pTFPlayer->m_Shared.SetJumping( false );
 
@@ -1482,7 +1425,7 @@ bool CTFGameMovement::CheckWater( void )
 		if ( nContents & MASK_WATER )
 		{
 			// In over our eyes
-			wl = WL_Eyes;  
+			wl = WL_Eyes;
 			VectorCopy( vecPoint, m_vecWaterPoint );
 			m_vecWaterPoint.z = flWaistZ;
 		}
@@ -1532,7 +1475,7 @@ bool CTFGameMovement::CheckWater( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::WaterMove( void )
 {
@@ -1600,7 +1543,7 @@ void CTFGameMovement::WaterMove( void )
 	{
 		wishspeed *= 0.8;
 	}
-	
+
 	// Water friction
 	VectorCopy( mv->m_vecVelocity, temp );
 	speed = VectorNormalize( temp );
@@ -1665,7 +1608,7 @@ void CTFGameMovement::WaterMove( void )
 	// Now move
 	// assume it is a stair or a slope, so press down from stepheight above
 	VectorMA (mv->GetAbsOrigin(), gpGlobals->frametime, mv->m_vecVelocity, dest);
-	
+
 	TracePlayerBBox( mv->GetAbsOrigin(), dest, PlayerSolidMask(), COLLISION_GROUP_PLAYER_MOVEMENT, pm );
 	if ( pm.fraction == 1.0f )
 	{
@@ -1674,11 +1617,11 @@ void CTFGameMovement::WaterMove( void )
 		{
 			start[2] += player->m_Local.m_flStepSize + 1;
 		}
-		
+
 		TracePlayerBBox( start, dest, PlayerSolidMask(), COLLISION_GROUP_PLAYER_MOVEMENT, pm );
 
 		if (!pm.startsolid && !pm.allsolid)
-		{	
+		{
 #if 0
 			float stepDist = pm.endpos.z - mv->GetAbsOrigin().z;
 			mv->m_outStepHeight += stepDist;
@@ -1741,12 +1684,12 @@ void CTFGameMovement::WaterMove( void )
 
 		StepMove( dest, pm );
 	}
-	
+
 	VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::WalkMove( void )
 {
@@ -1801,8 +1744,8 @@ void CTFGameMovement::WalkMove( void )
 	Accelerate( vecWishDirection, flWishSpeed, flAccelerate );
 	Assert( mv->m_vecVelocity.z == 0.0f );
 
-	float flAdjustedMaxSpeed = /* ( m_pTFPlayer->m_Shared.GetAmountStunned( TF_STUN_MOVEMENT ) ) ? 
-		mv->m_flMaxSpeed *= ( 1.f - m_pTFPlayer->m_Shared.GetAmountStunned( TF_STUN_MOVEMENT ) ) : 
+	float flAdjustedMaxSpeed = /* ( m_pTFPlayer->m_Shared.GetAmountStunned( TF_STUN_MOVEMENT ) ) ?
+		mv->m_flMaxSpeed *= ( 1.f - m_pTFPlayer->m_Shared.GetAmountStunned( TF_STUN_MOVEMENT ) ) :
 		*/ mv->m_flMaxSpeed;
 
 	// Clamp the players speed in x,y.
@@ -1847,8 +1790,8 @@ void CTFGameMovement::WalkMove( void )
 			{
 				vecBackMove *= flMaxBackSpeed / flBackSpeed;
 			}
-			
-			// reassemble velocity	
+
+			// reassemble velocity
 			mv->m_vecVelocity = vecBackMove + vecRightMove;
 
 			// Re-run this to prevent crazy values (clients can induce this via usercmd viewangles hacking)
@@ -1877,7 +1820,7 @@ void CTFGameMovement::WalkMove( void )
 	// Calculate the destination.
 	Vector vecDestination;
 	vecDestination.x = mv->GetAbsOrigin().x + ( mv->m_vecVelocity.x * gpGlobals->frametime );
-	vecDestination.y = mv->GetAbsOrigin().y + ( mv->m_vecVelocity.y * gpGlobals->frametime );	
+	vecDestination.y = mv->GetAbsOrigin().y + ( mv->m_vecVelocity.y * gpGlobals->frametime );
 	vecDestination.z = mv->GetAbsOrigin().z;
 
 #ifdef GAME_DLL
@@ -1963,7 +1906,7 @@ void CTFGameMovement::WalkMove( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::CheckKartWallBumping()
 {
@@ -2022,13 +1965,13 @@ void CTFGameMovement::CheckKartWallBumping()
 				m_pTFPlayer->EmitSound( "BumperCar.Bump" );
 				m_pTFPlayer->ParticleProp()->Create( "kart_impact_sparks", PATTACH_ABSORIGIN, NULL, vAim );
 			}
-#endif		
+#endif
 		}
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 float CTFGameMovement::GetAirSpeedCap( void )
 {
@@ -2096,7 +2039,7 @@ float CTFGameMovement::GetAirSpeedCap( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::AirMove( void )
 {
@@ -2131,7 +2074,7 @@ void CTFGameMovement::AirMove( void )
 	forward[2] = 0;
 	right[2]   = 0;
 	VectorNormalize(forward);  // Normalize remainder of vectors
-	VectorNormalize(right);    // 
+	VectorNormalize(right);    //
 
 	for (i=0 ; i<2 ; i++)       // Determine x and y parts of velocity
 		wishvel[i] = forward[i]*fmove + right[i]*smove;
@@ -2227,7 +2170,7 @@ bool CTraceFilterObject::ShouldHitEntity( IHandleEntity *pHandleEntity, int cont
 
 	if ( pEntity )
 	{
-	
+
 		if ( pEntity->IsBaseObject() )
 		{
 			CBaseObject *pObject = assert_cast<CBaseObject *>( pEntity );
@@ -2288,7 +2231,7 @@ bool CTraceFilterObject::ShouldHitEntity( IHandleEntity *pHandleEntity, int cont
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CBaseHandle CTFGameMovement::TestPlayerPosition( const Vector& pos, int collisionGroup, trace_t& pm )
 {
@@ -2297,7 +2240,7 @@ CBaseHandle CTFGameMovement::TestPlayerPosition( const Vector& pos, int collisio
 
 	Ray_t ray;
 	ray.Init( pos, pos, GetPlayerMins(), GetPlayerMaxs() );
-	
+
 	CTraceFilterObject traceFilter( mv->m_nPlayerHandle.Get(), collisionGroup );
 	enginetrace->TraceRay( ray, PlayerSolidMask(), &traceFilter, &pm );
 
@@ -2306,7 +2249,7 @@ CBaseHandle CTFGameMovement::TestPlayerPosition( const Vector& pos, int collisio
 		return pm.m_pEnt->GetRefEHandle();
 	}
 	else
-	{	
+	{
 		return INVALID_EHANDLE;
 	}
 }
@@ -2321,15 +2264,15 @@ void CTFGameMovement::TracePlayerBBox( const Vector& start, const Vector& end, u
 
 	Ray_t ray;
 	ray.Init( start, end, GetPlayerMins(), GetPlayerMaxs() );
-	
+
 	CTraceFilterObject traceFilter( mv->m_nPlayerHandle.Get(), collisionGroup );
 
 	enginetrace->TraceRay( ray, fMask, &traceFilter, &pm );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &input - 
+// Purpose:
+// Input  : &input -
 //-----------------------------------------------------------------------------
 void CTFGameMovement::CategorizePosition( void )
 {
@@ -2375,7 +2318,7 @@ void CTFGameMovement::CategorizePosition( void )
 	// NOTE YWB 7/5/07:  Since we're already doing a traceline here, we'll subsume the StayOnGround (stair debouncing) check into the main traceline we do here to see what we're standing on
 	bool bUnderwater = ( player->GetWaterLevel() >= WL_Eyes );
 	bool bMoveToEndPos = false;
-	if ( player->GetMoveType() == MOVETYPE_WALK && 
+	if ( player->GetMoveType() == MOVETYPE_WALK &&
 		player->GetGroundEntity() != NULL && !bUnderwater )
 	{
 		// if walking and still think we're on ground, we'll extend trace down by stepsize so we don't bounce down slopes
@@ -2443,7 +2386,7 @@ void CTFGameMovement::CategorizePosition( void )
 			trace.fraction < 1.0f ) 			// must hit something
 		{
 			float flDelta = fabs( mv->GetAbsOrigin().z - trace.endpos.z );
-			// HACK HACK:  The real problem is that trace returning that strange value 
+			// HACK HACK:  The real problem is that trace returning that strange value
 			//  we can't network over based on bit precision of networking origins
 			if ( flDelta > 0.5f * COORD_RESOLUTION )
 			{
@@ -2459,7 +2402,7 @@ void CTFGameMovement::CategorizePosition( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::CheckWaterJump( void )
 {
@@ -2488,7 +2431,7 @@ void CTFGameMovement::CheckWaterJump( void )
 
 	// Must be moving
 	curspeed = VectorNormalize( flatvelocity );
-	
+
 #if 1
 	// Copy movement amounts
 	float fmove = mv->m_flForwardMove;
@@ -2516,7 +2459,7 @@ void CTFGameMovement::CheckWaterJump( void )
 
 	Vector vecEnd;
 	VectorMA( vecStart, TF_WATERJUMP_FORWARD/*tf_waterjump_forward.GetFloat()*/, flatforward, vecEnd );
-	
+
 	trace_t tr;
 	TracePlayerBBox( vecStart, vecEnd, PlayerSolidMask(), COLLISION_GROUP_PLAYER_MOVEMENT, tr );
 	if ( tr.fraction < 1.0 )		// solid at waist
@@ -2528,7 +2471,7 @@ void CTFGameMovement::CheckWaterJump( void )
 				return;
 		}
 
-		vecStart.z = mv->GetAbsOrigin().z + player->GetViewOffset().z + WATERJUMP_HEIGHT; 
+		vecStart.z = mv->GetAbsOrigin().z + player->GetViewOffset().z + WATERJUMP_HEIGHT;
 		VectorMA( vecStart, TF_WATERJUMP_FORWARD/*tf_waterjump_forward.GetFloat()*/, flatforward, vecEnd );
 		VectorMA( vec3_origin, -50.0f, tr.plane.normal, player->m_vecWaterJumpVel );
 
@@ -2551,22 +2494,18 @@ void CTFGameMovement::CheckWaterJump( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose: Handle the falling player
 //-----------------------------------------------------------------------------
-void CTFGameMovement::CheckFalling( void )
-{
+void CTFGameMovement::CheckFalling( void ) {
 	// if we landed on the ground
-	if ( player->GetGroundEntity() != NULL && !IsDead() )
-	{
+	if ( player->GetGroundEntity() != NULL && !IsDead() ) {
 		// turn off the jumping flag if we're on ground after a jump
-		if ( m_pTFPlayer->m_Shared.IsJumping() )
-		{
+		if ( m_pTFPlayer->m_Shared.IsJumping() ) {
 			m_pTFPlayer->m_Shared.SetJumping( false );
 
 #ifdef CLIENT_DLL
 			IGameEvent *event = gameeventmanager->CreateEvent( "landed" );
-			if ( event && m_pTFPlayer->IsLocalPlayer() )
-			{
+			if ( event && m_pTFPlayer->IsLocalPlayer() ) {
 				event->SetInt( "player", m_pTFPlayer->GetUserID() );
 				gameeventmanager->FireEventClientSide( event );
 			}
@@ -2578,7 +2517,7 @@ void CTFGameMovement::CheckFalling( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::FullWalkMoveUnderwater()
 {
@@ -2594,8 +2533,7 @@ void CTFGameMovement::FullWalkMoveUnderwater()
 	}
 
 	// Was jump button pressed?
-	if ( mv->m_nButtons & IN_JUMP )
-	{
+	if ( mv->m_nButtons & IN_JUMP ) {
 		CheckJumpButton();
 	}
 	else
@@ -2612,19 +2550,16 @@ void CTFGameMovement::FullWalkMoveUnderwater()
 	// If we are on ground, no downward velocity.
 	if ( player->GetGroundEntity() != NULL )
 	{
-		mv->m_vecVelocity[2] = 0;			
+		mv->m_vecVelocity[2] = 0;
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CTFGameMovement::FullWalkMove()
-{
-	if ( !InWater() ) 
-	{
-		if ( m_pTFPlayer->m_Shared.InCond( TF_COND_PARACHUTE_ACTIVE ) && mv->m_vecVelocity[2] < 0 )
-		{
+void CTFGameMovement::FullWalkMove() {
+	if ( !InWater() ) {
+		if ( m_pTFPlayer->m_Shared.InCond( TF_COND_PARACHUTE_ACTIVE ) && mv->m_vecVelocity[2] < 0 ) {
 			mv->m_vecVelocity[2] = Max( mv->m_vecVelocity[2], m_pTFPlayer->m_Shared.InCond( TF_COND_BURNING ) ? tf_parachute_maxspeed_onfire_z.GetFloat() : tf_parachute_maxspeed_z.GetFloat() );
 
 			float flDrag = tf_parachute_maxspeed_xy.GetFloat();
@@ -2642,8 +2577,7 @@ void CTFGameMovement::FullWalkMove()
 	}
 
 	// If we are leaping out of the water, just update the counters.
-	if ( player->m_flWaterJumpTime )
-	{
+	if ( player->m_flWaterJumpTime ) {
 		// Try to jump out of the water (and check to see if we still are).
 		WaterJump();
 		TryPlayerMove();
@@ -2654,32 +2588,25 @@ void CTFGameMovement::FullWalkMove()
 	// If we are swimming in the water, see if we are nudging against a place we can jump up out
 	//  of, and, if so, start out jump.  Otherwise, if we are not moving up, then reset jump timer to 0.
 	//  Also run the swim code if we're a ghost or have the TF_COND_SWIMMING_NO_EFFECTS condition
-	if ( InWater() || ( m_pTFPlayer && ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_GHOST_MODE ) || m_pTFPlayer->m_Shared.InCond( TF_COND_SWIMMING_NO_EFFECTS ) ) ) )
-	{
+	if ( InWater() || ( m_pTFPlayer && ( m_pTFPlayer->m_Shared.InCond( TF_COND_HALLOWEEN_GHOST_MODE ) || m_pTFPlayer->m_Shared.InCond( TF_COND_SWIMMING_NO_EFFECTS ) ) ) ) {
 		FullWalkMoveUnderwater();
 		return;
 	}
 
-	if (mv->m_nButtons & IN_JUMP)
-	{
+	if (mv->m_nButtons & IN_JUMP) {
 		CheckJumpButton();
-	}
-	else
-	{
+	} else {
 		mv->m_nOldButtons &= ~IN_JUMP;
 	}
 
 	// Make sure velocity is valid.
 	CheckVelocity();
 
-	if (player->GetGroundEntity() != NULL)
-	{
+	if (player->GetGroundEntity() != NULL) {
 		mv->m_vecVelocity[2] = 0.0;
 		Friction();
 		WalkMove();
-	}
-	else
-	{
+	} else {
 		AirMove();
 	}
 
@@ -2687,14 +2614,12 @@ void CTFGameMovement::FullWalkMove()
 	CategorizePosition();
 
 	// Add any remaining gravitational component if we are not in water.
-	if ( !InWater() )
-	{
+	if ( !InWater() ) {
 		FinishGravity();
 	}
 
 	// If we are on ground, no downward velocity.
-	if ( player->GetGroundEntity() != NULL )
-	{
+	if ( player->GetGroundEntity() != NULL ) {
 		mv->m_vecVelocity[2] = 0;
 	}
 
@@ -2723,14 +2648,14 @@ void CTFGameMovement::FullWalkMove()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::FullTossMove( void )
 {
 	trace_t pm;
 	Vector move;
 
-	// add velocity if player is moving 
+	// add velocity if player is moving
 	if ( (mv->m_flForwardMove != 0.0f) || (mv->m_flSideMove != 0.0f) || (mv->m_flUpMove != 0.0f))
 	{
 		Vector forward, right, up;
@@ -2746,7 +2671,7 @@ void CTFGameMovement::FullTossMove( void )
 		smove = mv->m_flSideMove;
 
 		VectorNormalize (forward);  // Normalize remainder of vectors.
-		VectorNormalize (right);    // 
+		VectorNormalize (right);    //
 
 		for (i=0 ; i<3 ; i++)       // Determine x and y parts of velocity
 			wishvel[i] = forward[i]*fmove + right[i]*smove;
@@ -2805,7 +2730,7 @@ void CTFGameMovement::FullTossMove( void )
 	CheckVelocity();
 
 	if (pm.allsolid)
-	{	
+	{
 		// entity is trapped in another solid
 		SetGroundEntity( &pm );
 		mv->m_vecVelocity.Init();
@@ -2867,7 +2792,7 @@ void CTFGameMovement::StepMove( Vector &vecDestination, trace_t &trace )
 		}
 
 		// If we are not on the standable ground any more or going the "high road" didn't move us at all, then we'll also want to check the "low road"
-		if ( ( trace.fraction != 1.0f && 
+		if ( ( trace.fraction != 1.0f &&
 			trace.plane.normal[2] < 0.7 ) || VectorCompare( mv->GetAbsOrigin(), vecPos ) )
 		{
 			bLowRoad = true;
@@ -2905,7 +2830,7 @@ void CTFGameMovement::StepMove( Vector &vecDestination, trace_t &trace )
 		{
 			float flUpDist = ( vecUpPos.x - vecPos.x ) * ( vecUpPos.x - vecPos.x ) + ( vecUpPos.y - vecPos.y ) * ( vecUpPos.y - vecPos.y );
 			float flDownDist = ( vecDownPos.x - vecPos.x ) * ( vecDownPos.x - vecPos.x ) + ( vecDownPos.y - vecPos.y ) * ( vecDownPos.y - vecPos.y );
-	
+
 			// decide which one went farther
 			if ( flUpDist >= flDownDist )
 			{
@@ -2926,7 +2851,7 @@ void CTFGameMovement::StepMove( Vector &vecDestination, trace_t &trace )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CTFGameMovement::GameHasLadders() const
 {
@@ -2934,7 +2859,7 @@ bool CTFGameMovement::GameHasLadders() const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::SetGroundEntity( trace_t *pm )
 {
@@ -2970,7 +2895,7 @@ void CTFGameMovement::SetGroundEntity( trace_t *pm )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::PlayerRoughLandingEffects( float fvol )
 {
@@ -3007,7 +2932,7 @@ void CTFGameMovement::PlayerRoughLandingEffects( float fvol )
 #if 0
 // Not being used currently - part of TestDuck!
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::HandleDuck( int nButtonsPressed )
 {
@@ -3066,7 +2991,7 @@ void CTFGameMovement::HandleDuck( int nButtonsPressed )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::HandleUnDuck( int nButtonsReleased )
 {
@@ -3130,7 +3055,7 @@ void CTFGameMovement::HandleUnDuck( int nButtonsReleased )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTFGameMovement::TestDuck(  )
 {
@@ -3445,7 +3370,7 @@ void CTFGameMovement::Duck( void )
 	// HACK: (jimd 5/25/2006) we have a reoccuring bug (#50063 in Tracker) where the player's
 	// view height gets left at the ducked height while the player is standing, but we haven't
 	// been  able to repro it to find the cause.  It may be fixed now due to a change I'm
-	// also making in UpdateDuckJumpEyeOffset but just in case, this code will sense the 
+	// also making in UpdateDuckJumpEyeOffset but just in case, this code will sense the
 	// problem and restore the eye to the proper position.  It doesn't smooth the transition,
 	// but it is preferable to leaving the player's view too low.
 	//
@@ -3477,7 +3402,7 @@ void CTFGameMovement::Duck( void )
 		engine->Con_NPrintf( 6, "viewoffset %3.2f, %3.2f, %3.2f", player->GetViewOffset().x, player->GetViewOffset().y, player->GetViewOffset().z );
 		engine->Con_NPrintf( 7, "IN_DUCK %d", mv->m_nButtons & IN_DUCK );
 		engine->Con_NPrintf( 8, "GetDuckTimer %3.2f", Max( 0.f, m_pTFPlayer->m_Shared.GetDuckTimer() - gpGlobals->curtime ) );
-#else 
+#else
 		engine->Con_NPrintf( 10 + 0, "CLIENT" );
 		engine->Con_NPrintf( 10 + 1, "m_flDucktime %3.2f", player->m_Local.m_flDucktime );
 		engine->Con_NPrintf( 10 + 2, "m_flDuckJumpTime %3.2f", player->m_Local.m_flDuckJumpTime );
@@ -3490,4 +3415,3 @@ void CTFGameMovement::Duck( void )
 #endif
 	}
 }
-

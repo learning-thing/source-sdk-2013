@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -16,17 +16,13 @@ FileWeaponInfo_t* CreateWeaponInfo()
 
 
 
-CHL2MPSWeaponInfo::CHL2MPSWeaponInfo()
-{
+CHL2MPSWeaponInfo::CHL2MPSWeaponInfo() {
 	m_iPlayerDamage = 0;
 }
 
 
-void CHL2MPSWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName )
-{
+void CHL2MPSWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName ) {
 	BaseClass::Parse( pKeyValuesData, szWeaponName );
 
 	m_iPlayerDamage = pKeyValuesData->GetInt( "damage", 0 );
 }
-
-

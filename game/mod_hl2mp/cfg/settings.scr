@@ -32,7 +32,7 @@
 
 
 // Half-Life Server Configuration Layout Script (stores last settings chosen, too)
-// File generated:  Sun Oct 11 06:30:12 PM
+// File generated:  Thu Oct 15 07:23:14 PM
 //
 //
 // Cvar	-	Setting
@@ -80,14 +80,14 @@ DESCRIPTION SERVER_OPTIONS
 	{
 		"#Valve_Teamplay"
 		{ BOOL }
-		{ "0" }
+		{ "1" }
 	}
 
 	"mp_weaponstay"
 	{
 		"#Valve_Weapons_Stay"
 		{ BOOL }
-		{ "1" }
+		{ "0" }
 	}
 
 	"mp_footsteps"
@@ -101,14 +101,14 @@ DESCRIPTION SERVER_OPTIONS
 	{
 		"#Valve_Flashlight"
 		{ BOOL }
-		{ "1" }
+		{ "0" }
 	}
 
 	"mp_forcerespawn"
 	{
 		"#Valve_Force_Respawn"
 		{ BOOL }
-		{ "0" }
+		{ "1" }
 	}
 
 }

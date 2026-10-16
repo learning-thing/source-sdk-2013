@@ -23,12 +23,13 @@
 
 static ConVar sv_autoladderdismount( "sv_autoladderdismount", "1", FCVAR_REPLICATED, "Automatically dismount from ladders when you reach the end (don't have to +USE)." );
 static ConVar sv_ladderautomountdot( "sv_ladderautomountdot", "0.4", FCVAR_REPLICATED, "When auto-mounting a ladder by looking up its axis, this is the tolerance for looking now directly along the ladder axis." );
-static ConVar sv_autoBunnyHopping( "sv_autoBunnyHopping", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Auto Jump on ground contact" );
 static ConVar sv_ladder_useonly( "sv_ladder_useonly", "0", FCVAR_REPLICATED, "If set, ladders can only be mounted by pressing +USE" );
 
 #define USE_DISMOUNT_SPEED 100
 
 extern bool g_bMovementOptimizations;
+extern ConVar sv_autoBunnyHopping;
+extern ConVar sv_doFallDamage;
 
 //-----------------------------------------------------------------------------
 // Purpose:

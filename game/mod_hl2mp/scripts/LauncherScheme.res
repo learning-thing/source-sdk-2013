@@ -36,9 +36,9 @@ Scheme
 		Menu
 		{
 			"FgColor"			"150 150 150 255"
-			"BgColor"			"70 70 70 255"
-			"ArmedFgColor"		"255 183 0 255"
-			"ArmedBgColor"		"134 91 19 255"
+			"BgColor"			"10 10 11 255"
+			"ArmedFgColor"		"0 183 255 255"
+			"ArmedBgColor"		"10 91 134 255"
 			"DividerColor"		"56 56 56 255"
 
 			"TextInset"			"6"			//!! not working yet
@@ -65,12 +65,12 @@ Scheme
 		// buddy buttons
 		BuddyButton
 		{
-			"FgColor1"		"255 183 0 255"
-			"FgColor2"		"157 105 0 255"
+			"FgColor1"		"0 183 255 255"
+			"FgColor2"		"0 105 157 255"
 
-			"ArmedFgColor1"	"255 183 0 255"
-			"ArmedFgColor2"	"255 183 0 255"
-			"ArmedBgColor"	"134 91 19 255"
+			"ArmedFgColor1"	"0 183 255 255"
+			"ArmedFgColor2"	"0 183 255 255"
+			"ArmedBgColor"	"19 91 134 255"
 		}
 
 		"SectionTextColor"		"121 121 121 255"
@@ -222,7 +222,7 @@ Scheme
 			{
 				"1"
 				{
-					"color" "255 170 0 255"
+					"color" "0 170 255 255"
 					"offset" "0 1"
 				}
 			}
@@ -231,7 +231,7 @@ Scheme
 			{
 				"1"
 				{
-					"color" "97 64 0 255"
+					"color" "0 64 97 255"
 					"offset" "1 0"
 				}
 			}
@@ -240,7 +240,7 @@ Scheme
 			{
 				"1"
 				{
-					"color" "255 170 0 255"
+					"color" "0 170 255 255"
 					"offset" "0 0"
 				}
 			}
@@ -249,7 +249,7 @@ Scheme
 			{
 				"1"
 				{
-					"color" "97 64 0 255"
+					"color" "0 64 97 255"
 					"offset" "0 0"
 				}
 			}

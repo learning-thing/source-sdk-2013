@@ -72,8 +72,7 @@ struct MMRatingData_t {
 //
 // GDPR Warning - The GDPR exporter only shows whitelisted rating types to the user.  Any new rating types added
 //                here that are not redundant with other data may need to be exported.
-enum EMMRating
-{
+enum EMMRating {
 	k_nMMRating_LowestValue = -1,
 	k_nMMRating_Invalid								= -1,
 
@@ -99,10 +98,8 @@ enum EMMRating
 
 // All types must be accounted for here to ensure we're not accidentally overlooking something, rather than implicitly
 // by not having an active backend/etc.
-inline const char* EMMRating_DisplayedForGDPR( EMMRating eRatingType )
-{
-	switch ( eRatingType )
-	{
+inline const char* EMMRating_DisplayedForGDPR( EMMRating eRatingType ) {
+	switch ( eRatingType ) {
 		// Types that store at least in part a non-proprietary user-visible rating.  Must have a backend implementing
 		// the GDPRExport features
 		case k_nMMRating_6v6_GLICKO:                           return "Competitive_Glicko";
@@ -140,8 +137,7 @@ COMPILE_TIME_ASSERT( k_nMMRating_Last        <= INT16_MAX );
 // Stored value, don't re-order
 // XXX(JohnS): GDPR Warning - types 0 (MatchIDs) and 2 (Player Acknowledgement) are shown specially by the exporter.  New
 //             sources here need to be checked for possible GDPR export
-enum EMMRatingSource
-{
+enum EMMRatingSource {
 	k_nMMRatingSource_LowestValue     = -1,
 	k_nMMRatingSource_Invalid         = -1,
 
@@ -178,8 +174,7 @@ enum EMatchGroupLeaderboard
 const char *GetMatchGroupLeaderboardName( EMatchGroupLeaderboard );
 
 // Late join modes
-enum EMatchMode
-{
+enum EMatchMode {
 	// Uninitialized/unknown
 	eMatchMode_Invalid,
 	// Not late join / don't use late join
@@ -196,10 +191,8 @@ enum EMatchMode
 	eMatchMode_Manual_ExistingMatchBased,
 };
 
-inline bool EMatchMode_IsManual( EMatchMode eMatchMode )
-{
-	switch ( eMatchMode )
-	{
+inline bool EMatchMode_IsManual( EMatchMode eMatchMode ) {
+	switch ( eMatchMode ) {
 		case eMatchMode_Invalid:
 		case eMatchMode_MatchMaker_CompleteFromQueue:
 		case eMatchMode_MatchMaker_LateJoinDropIn:
@@ -216,10 +209,8 @@ inline bool EMatchMode_IsManual( EMatchMode eMatchMode )
 // Uses existing lobby and "incomplete match" parties that are already joined.  Different from InProgress, which
 // includes DropIn (in drop-in mode the match description only has new people that are going to be merged into some
 // to-be-determined match.)
-inline bool EMatchMode_UsesExistingLobbyAndParties( EMatchMode eMatchMode )
-{
-	switch ( eMatchMode )
-	{
+inline bool EMatchMode_UsesExistingLobbyAndParties( EMatchMode eMatchMode ) {
+	switch ( eMatchMode ) {
 		case eMatchMode_Invalid:
 		case eMatchMode_MatchMaker_CompleteFromQueue:
 		case eMatchMode_Manual_NewMatch:
@@ -233,10 +224,8 @@ inline bool EMatchMode_UsesExistingLobbyAndParties( EMatchMode eMatchMode )
 	return false;
 }
 
-inline bool EMatchMode_InProgressMatch( EMatchMode eMatchMode )
-{
-	switch ( eMatchMode )
-	{
+inline bool EMatchMode_InProgressMatch( EMatchMode eMatchMode ) {
+	switch ( eMatchMode ) {
 		case eMatchMode_Invalid:
 		case eMatchMode_MatchMaker_CompleteFromQueue:
 		case eMatchMode_Manual_NewMatch:
@@ -297,8 +286,7 @@ inline bool IsMannUpGroup( ETFMatchGroup eMatchGroup )
 	return false;
 }
 
-enum EMMServerMode
-{
+enum EMMServerMode {
 	eMMServerMode_Idle,
 	eMMServerMode_Incomplete_Match,
 	eMMServerMode_Full,
@@ -306,8 +294,7 @@ enum EMMServerMode
 };
 
 // Separate penalty pools (and rules) for different classes of modes
-enum EMMPenaltyPool
-{
+enum EMMPenaltyPool {
 	eMMPenaltyPool_Invalid = -1,
 	eMMPenaltyPool_Casual = 0, // Pool with lenient penalties for most casual/mainstream gamemodes
 	eMMPenaltyPool_Ranked,  // Pool with strict and cumulative penalties for ranked gamemodes where abandons tank matches

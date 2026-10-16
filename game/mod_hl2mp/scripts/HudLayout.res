@@ -49,11 +49,11 @@
 		"fieldName" "TeamDisplay"
 	    "visible" "0"
 	    "enabled" "1"
-		"xpos"	"16"
-		"ypos"	"410" [!$DECK]
+		"xpos"	"200"
+		"ypos"	"5" [!$DECK]
 		"ypos"	"400" [$DECK]
-	    "wide" "200"
-	    "tall" "60"
+	    "wide" "100"
+	    "tall" "40"
 	    "text_xpos" "8"
 	    "text_ypos" "4"
 	}
@@ -218,8 +218,8 @@
 		"wide"	"102"
 		"tall"	"26"
 		
-		"AuxPowerLowColor" "255 0 0 220"
-		"AuxPowerHighColor" "255 220 0 220"
+		"AuxPowerLowColor" "0 0 220 220"
+		"AuxPowerHighColor" "0 0 220 220"
 		"AuxPowerDisabledAlpha" "70"
 
 		"BarInsetX" "8"
@@ -298,7 +298,7 @@
 	HudFlashlight
 	{
 		"fieldName" "HudFlashlight"
-		"visible" "1"
+		"visible" "0"
 		"PaintBackgroundType"	"2"
 		"xpos"	"270"		[$WIN32]
 		"ypos"	"444"		[!$DECK]
@@ -342,7 +342,6 @@
 		"dmg_tall1" "240"
 		"dmg_tall2" "200"
 	}
-
 	HudZoom
 	{
 		"fieldName" "HudZoom"
@@ -386,7 +385,6 @@
 		"wide"	 "640"
 		"tall"	 "480"
 	}
-
 	HudDeathNotice
 	{
 		"fieldName" "HudDeathNotice"
@@ -399,7 +397,7 @@
 	HudVehicle
 	{
 		"fieldName" "HudVehicle"
-		"visible" "1"
+		"visible" "0"
 		"enabled" "1"
 		"wide"	 "640"
 		"tall"	 "480"
@@ -514,10 +512,10 @@
 	HUDQuickInfo
 	{
 		"fieldName" "HUDQuickInfo"
-		"visible" "1"
-		"enabled" "1"
-		"wide"	 "640"
-		"tall"	 "480"
+		"visible" "0"
+		"enabled" "0"
+		"wide"	 "0"
+		"tall"	 "0"
 	}
 
 	HudWeapon
@@ -580,7 +578,7 @@
 		"text_ypos"	"8"
 		"text_xgap"	"8"
 		"text_ygap"	"8"
-		"TextColor"	"255 170 0 220"
+		"TextColor"	"100 170 255 220"
 
 		"PaintBackgroundType"	"2"
 	}
@@ -597,7 +595,7 @@
 		"tall"	"46"
 		"text_xpos"	"8"
 		"text_ypos"	"34"
-		"SquadIconColor"	"255 220 0 160"
+		"SquadIconColor"	"10 220 255 160"
 		"IconInsetX"	"8"
 		"IconInsetY"	"0"
 		"IconGap"		"24"

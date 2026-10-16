@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -37,7 +37,7 @@ public:
 
 	CWeaponPistol(void);
 
-	DECLARE_NETWORKCLASS(); 
+	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
 
 	void	Precache( void );
@@ -55,36 +55,36 @@ public:
 	virtual bool Reload( void );
 
 	virtual const Vector& GetBulletSpread( void )
-	{		
+	{
 		static Vector cone;
 
-		float ramp = RemapValClamped(	m_flAccuracyPenalty, 
-											0.0f, 
-											PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME, 
-											0.0f, 
-											1.0f ); 
+		float ramp = RemapValClamped(	m_flAccuracyPenalty,
+											0.0f,
+											PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME,
+											0.0f,
+											1.0f );
 
 			// We lerp from very accurate to inaccurate over time
 		VectorLerp( VECTOR_CONE_1DEGREES, VECTOR_CONE_6DEGREES, ramp, cone );
 
 		return cone;
 	}
-	
-	virtual int	GetMinBurst() 
-	{ 
-		return 1; 
-	}
 
-	virtual int	GetMaxBurst() 
-	{ 
-		return 3; 
-	}
-
-	virtual float GetFireRate( void ) 
+	virtual int	GetMinBurst()
 	{
-		return 0.5f; 
+		return 1;
 	}
-	
+
+	virtual int	GetMaxBurst()
+	{
+		return 3;
+	}
+
+	virtual float GetFireRate( void )
+	{
+		return 0.5f;
+	}
+
 #ifndef CLIENT_DLL
 	DECLARE_ACTTABLE();
 #endif
@@ -128,7 +128,7 @@ LINK_ENTITY_TO_CLASS( weapon_pistol, CWeaponPistol );
 PRECACHE_WEAPON_REGISTER( weapon_pistol );
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponPistol::m_acttable[] = 
+acttable_t CWeaponPistol::m_acttable[] =
 {
 	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
 	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },
@@ -162,7 +162,7 @@ CWeaponPistol::CWeaponPistol( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPistol::Precache( void )
 {
@@ -177,7 +177,7 @@ void CWeaponPistol::DryFire( void )
 {
 	WeaponSound( EMPTY );
 	SendWeaponAnim( ACT_VM_DRYFIRE );
-	
+
 	m_flSoonestPrimaryAttack	= gpGlobals->curtime + PISTOL_FASTEST_DRY_REFIRE_TIME;
 	m_flNextPrimaryAttack		= gpGlobals->curtime + SequenceDuration();
 }
@@ -185,14 +185,10 @@ void CWeaponPistol::DryFire( void )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void CWeaponPistol::PrimaryAttack( void )
-{
-	if ( ( gpGlobals->curtime - m_flLastAttackTime ) > 0.5f )
-	{
+void CWeaponPistol::PrimaryAttack( void ) {
+	if ( ( gpGlobals->curtime - m_flLastAttackTime ) > 0.5f ) {
 		m_nNumShotsFired = 0;
-	}
-	else
-	{
+	} else {
 		m_nNumShotsFired++;
 	}
 
@@ -201,8 +197,7 @@ void CWeaponPistol::PrimaryAttack( void )
 
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
-	if( pOwner )
-	{
+	if( pOwner ) {
 		// Each time the player fires the pistol, reset the view punch. This prevents
 		// the aim from 'drifting off' when the player fires very quickly. This may
 		// not be the ideal way to achieve this, but it's cheap and it works, which is
@@ -217,7 +212,7 @@ void CWeaponPistol::PrimaryAttack( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPistol::UpdatePenaltyTime( void )
 {
@@ -227,28 +222,25 @@ void CWeaponPistol::UpdatePenaltyTime( void )
 		return;
 
 	// Check our penalty time decay
-	if ( ( ( pOwner->m_nButtons & IN_ATTACK ) == false ) && ( m_flSoonestPrimaryAttack < gpGlobals->curtime ) )
-	{
+	if ( ( ( pOwner->m_nButtons & IN_ATTACK ) == false ) && ( m_flSoonestPrimaryAttack < gpGlobals->curtime ) ) {
 		m_flAccuracyPenalty -= gpGlobals->frametime;
 		m_flAccuracyPenalty = clamp( m_flAccuracyPenalty, 0.0f, PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME );
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CWeaponPistol::ItemPreFrame( void )
-{
+void CWeaponPistol::ItemPreFrame( void ) {
 	UpdatePenaltyTime();
 
 	BaseClass::ItemPreFrame();
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CWeaponPistol::ItemBusyFrame( void )
-{
+void CWeaponPistol::ItemBusyFrame( void ) {
 	UpdatePenaltyTime();
 
 	BaseClass::ItemBusyFrame();
@@ -257,38 +249,33 @@ void CWeaponPistol::ItemBusyFrame( void )
 //-----------------------------------------------------------------------------
 // Purpose: Allows firing as fast as button is pressed
 //-----------------------------------------------------------------------------
-void CWeaponPistol::ItemPostFrame( void )
-{
+void CWeaponPistol::ItemPostFrame( void ) {
 	BaseClass::ItemPostFrame();
 
 	if ( m_bInReload )
 		return;
-	
+
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
 	if ( pOwner == NULL )
 		return;
-	
-	if ( pOwner->m_nButtons & IN_ATTACK2 )
-	{
+
+	if ( pOwner->m_nButtons & IN_ATTACK2 ) {
 		m_flLastAttackTime = gpGlobals->curtime + PISTOL_FASTEST_REFIRE_TIME;
 		m_flSoonestPrimaryAttack = gpGlobals->curtime + PISTOL_FASTEST_REFIRE_TIME;
 		m_flNextPrimaryAttack = gpGlobals->curtime + PISTOL_FASTEST_REFIRE_TIME;
 	}
 
 	//Allow a refire as fast as the player can click
-	if ( ( ( pOwner->m_nButtons & IN_ATTACK ) == false ) && ( m_flSoonestPrimaryAttack < gpGlobals->curtime ) )
-	{
+	if ( ( ( pOwner->m_nButtons & IN_ATTACK ) == false ) && ( m_flSoonestPrimaryAttack < gpGlobals->curtime ) ) {
 		m_flNextPrimaryAttack = gpGlobals->curtime - 0.1f;
-	}
-	else if ( ( pOwner->m_nButtons & IN_ATTACK ) && ( m_flNextPrimaryAttack < gpGlobals->curtime ) && ( m_iClip1 <= 0 ) )
-	{
+	} else if ( ( pOwner->m_nButtons & IN_ATTACK ) && ( m_flNextPrimaryAttack < gpGlobals->curtime ) && ( m_iClip1 <= 0 ) ) {
 		DryFire();
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 Activity CWeaponPistol::GetPrimaryAttackActivity( void )
@@ -307,8 +294,7 @@ Activity CWeaponPistol::GetPrimaryAttackActivity( void )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CWeaponPistol::Reload( void )
-{
+bool CWeaponPistol::Reload( void ) {
 	bool fRet = DefaultReload( GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD );
 	if ( fRet )
 	{
@@ -319,12 +305,11 @@ bool CWeaponPistol::Reload( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CWeaponPistol::AddViewKick( void )
-{
+void CWeaponPistol::AddViewKick( void ) {
 	CBasePlayer *pPlayer  = ToBasePlayer( GetOwner() );
-	
+
 	if ( pPlayer == NULL )
 		return;
 

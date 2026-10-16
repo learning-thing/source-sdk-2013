@@ -49,6 +49,5 @@ extern ConVar r_JeepViewZHeight;
 extern ConVar r_AirboatViewDampenFreq;
 extern ConVar r_AirboatViewDampenDamp;
 extern ConVar r_AirboatViewZHeight;
-//extern ConVar sv_autoBunnyHopping;
 
 #endif // MOVEVARS_SHARED_H
