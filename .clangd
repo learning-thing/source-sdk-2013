@@ -1,0 +1,18 @@
+# Source - https://stackoverflow.com/a/69269142
+# Posted by Aincvy, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-10-15, License - CC BY-SA 4.0
+
+CompileFlags: # Tweak the parse settings, example directory given to show format
+  Add:
+    - "-I/home/benji/Dokumente/Programme/Clone/hlClone/source-sdk-2013/src/game/server"
+    - "-I/home/benji/Dokumente/Programme/Clone/hlClone/source-sdk-2013/src/game/shared"
+    - "-I/home/benji/Dokumente/Programme/Clone/hlClone/source-sdk-2013/src/game/client"
+    - "-I/home/benji/Dokumente/Programme/Clone/hlClone/source-sdk-2013/src/"
+    - "-I/home/benji/Dokumente/Programme/Clone/hlClone/source-sdk-2013/src/public"
+    - "-I/home/benji/Dokumente/Programme/Clone/hlClone/source-sdk-2013/src/public/tier0"
+    - "-DSTATIC_TIER0"
+    - "-DPOSIX"
+    - "-DLINUX"
+    - "-DGNUC"
+    - "-DGAME_DLL"
+    - "-DCLIENT_DLL"
